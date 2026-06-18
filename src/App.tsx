@@ -118,58 +118,17 @@ export default function App() {
   useEffect(() => {
     async function loadInitialData() {
       try {
-        let loadedPets = await getPets();
-        
-        // Seed database if empty
-        if (loadedPets.length === 0) {
-          const defaultPet: Pet = {
-            id: 'default-pet-1',
-            name: 'Baks',
-            species: 'pies',
-            birthDate: '2024-05-10',
-            notes: 'Uwielbia aportować piłki tenisowe. Ma delikatny żołądek.',
-            createdAt: Date.now(),
-          };
-
-          const defaultNotes: DiaryEntry[] = [
-            {
-              id: 'default-note-1',
-              petId: defaultPet.id,
-              date: '2026-06-15',
-              time: '14:30',
-              category: 'notatka',
-              title: 'Pierwsza zabawka i gryzak',
-              content: 'Baks dostał dziś swój nowy gumowy gryzak. Początkowo szczekał na niego z odległości metra, ale po posmarowaniu pasztetem zaczął się bawić i teraz nie chce go oddać za żadne skarby!',
-              createdAt: Date.now() - 86400000,
-            },
-            {
-              id: 'default-note-2',
-              petId: defaultPet.id,
-              date: '2026-06-12',
-              time: '10:15',
-              category: 'weterynarz',
-              title: 'Kontrolne szczepienie i waga',
-              content: 'Wizyta u dr. Wiśniewskiego w klinice Cztery Łapy. Szczepienie przeciwko wściekliźnie podane bez pisków! Waga u weterynarza: 14.5 kg. Lekarz mówi, że budowa jest idealna. Następna wizyta za rok.',
-              createdAt: Date.now() - 86400000 * 4,
-            }
-          ];
-
-          await savePet(defaultPet);
-          for (const note of defaultNotes) {
-            await saveEntry(note);
-          }
-
-          loadedPets = [defaultPet];
-        }
-
+        const loadedPets = await getPets();
         setPets(loadedPets);
 
         // Retrieve active pet from localStorage, fallback to first pet
         const cachedPetId = localStorage.getItem('DziennikPupila_activePetId');
         if (cachedPetId && loadedPets.some(p => p.id === cachedPetId)) {
           setActivePetId(cachedPetId);
-        } else {
+        } else if (loadedPets.length > 0) {
           setActivePetId(loadedPets[0].id);
+        } else {
+          setActivePetId(undefined);
         }
 
       } catch (err) {
