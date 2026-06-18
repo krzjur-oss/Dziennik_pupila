@@ -1,0 +1,11 @@
+{
+  "name": "Dziennik Pupila",
+  "description": "Offline-first PWA for pet owners to keep a journal of their pets with photo uploads and handwritten stylus notes.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

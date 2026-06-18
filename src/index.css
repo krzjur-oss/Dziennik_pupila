@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --color-natural-primary: #43403a;
+  --color-natural-secondary: #7d8461;
+  --color-natural-dark: #2a2824;
+  --color-natural-sage: #7d8461;
+  --color-natural-olive: #5a5a40;
+  --color-natural-cream: #fbf8f3;
+  --color-natural-sand: #fdfaf5;
+  --color-natural-clay: #9a9282;
+  --color-natural-border: #e8e2d9;
+  --color-natural-highlight: #f0ede6;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #fdfaf5; /* Natural Tones warm sand ambient base */
+  color: #43403a;
+  -webkit-tap-highlight-color: transparent;
+}
+
