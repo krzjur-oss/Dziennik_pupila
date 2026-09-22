@@ -53,6 +53,13 @@ const EVENT_TYPES: Record<HealthEventType, { label: string; icon: string; bg: st
     text: 'text-purple-800',
     border: 'border-purple-200'
   },
+  pielegnacja: {
+    label: 'Pielęgnacja',
+    icon: '✂️',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-800',
+    border: 'border-emerald-200'
+  },
   inne: {
     label: 'Inne',
     icon: '🗓️',
@@ -241,10 +248,15 @@ export default function HealthCalendar({
       
       {/* Header and Add button */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-serif font-bold text-natural-dark uppercase tracking-wider flex items-center gap-1.5">
-          <Calendar size={16} className="text-natural-secondary" />
-          Kalendarz Zdrowia
-        </h3>
+        <div>
+          <h3 className="text-sm font-serif font-bold text-natural-dark uppercase tracking-wider flex items-center gap-1.5">
+            <Calendar size={16} className="text-natural-secondary" />
+            Zadania i Terminarz (To-Do)
+          </h3>
+          <p className="text-[10px] text-natural-primary/70">
+            Pielęgnacja, zdrowie i przypomnienia dla pupila
+          </p>
+        </div>
         <button
           type="button"
           onClick={() => {
@@ -258,7 +270,7 @@ export default function HealthCalendar({
           }`}
         >
           {isFormOpen ? <X size={13} /> : <Plus size={13} />}
-          {isFormOpen ? 'Anuluj' : 'Dodaj'}
+          {isFormOpen ? 'Anuluj' : 'Dodaj zadanie'}
         </button>
       </div>
 
@@ -354,8 +366,43 @@ export default function HealthCalendar({
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-natural-border p-4 space-y-3.5 animate-in slide-in-from-top-3 duration-200">
           <div className="border-b border-natural-border/60 pb-1.5">
             <h4 className="text-xs font-serif font-extrabold text-natural-dark uppercase tracking-wider">
-              Zaplanuj nowe zdarzenie
+              Zaplanuj nowe zadanie / zdarzenie
             </h4>
+          </div>
+
+          {/* Quick presets for care & grooming */}
+          <div>
+            <label className="block text-[10px] font-bold text-natural-primary/80 uppercase mb-1.5">
+              Szybkie szablony zadań (To-Do):
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { title: 'Obcięcie pazurów', type: 'pielegnacja' as HealthEventType },
+                { title: 'Kąpiel i pielęgnacja', type: 'pielegnacja' as HealthEventType },
+                { title: 'Czesanie i szczotkowanie', type: 'pielegnacja' as HealthEventType },
+                { title: 'Czyszczenie uszu i oczu', type: 'pielegnacja' as HealthEventType },
+                { title: 'Mycie zębów', type: 'pielegnacja' as HealthEventType },
+                { title: 'Zabezpieczenie p/kleszczom', type: 'odrobaczanie' as HealthEventType },
+                { title: 'Podanie leków', type: 'leki' as HealthEventType },
+                { title: 'Szczepienie', type: 'szczepienie' as HealthEventType }
+              ].map((preset) => (
+                <button
+                  key={preset.title}
+                  type="button"
+                  onClick={() => {
+                    setTitle(preset.title);
+                    setType(preset.type);
+                    if (!date) {
+                      const todayStr = new Date().toISOString().split('T')[0];
+                      setDate(todayStr);
+                    }
+                  }}
+                  className="text-[10px] px-2 py-0.5 rounded-lg bg-natural-highlight hover:bg-natural-sand text-natural-dark border border-natural-border font-medium transition cursor-pointer"
+                >
+                  + {preset.title}
+                </button>
+              ))}
+            </div>
           </div>
 
           {formError && (

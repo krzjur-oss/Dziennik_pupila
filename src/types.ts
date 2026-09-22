@@ -13,7 +13,7 @@ export interface Pet {
 
 export type CategoryType = 'zdrowie' | 'jedzenie' | 'weterynarz' | 'aktywnosc' | 'pielegnacja' | 'pomiary' | 'notatka';
 
-export type HealthEventType = 'szczepienie' | 'wizyta' | 'odrobaczanie' | 'leki' | 'inne';
+export type HealthEventType = 'szczepienie' | 'wizyta' | 'odrobaczanie' | 'leki' | 'pielegnacja' | 'inne';
 
 export interface HealthEvent {
   id: string;
