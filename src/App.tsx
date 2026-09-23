@@ -18,6 +18,7 @@ import NoteList from './components/NoteList';
 import PhotoGallery from './components/PhotoGallery';
 import WeightChart from './components/WeightChart';
 import HealthCalendar from './components/HealthCalendar';
+import LegalModal from './components/LegalModal';
 import {
   Heart,
   Plus,
@@ -63,6 +64,7 @@ export default function App() {
   // View States
   const [isPetManagerOpen, setIsPetManagerOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showLegalModal, setShowLegalModal] = useState(false);
   const [editingEntry, setEditingEntry] = useState<DiaryEntry | 'new' | null>(null);
 
   // Backup state
@@ -490,6 +492,20 @@ export default function App() {
               <p className="text-[10px] text-natural-primary/60 italic">
                 💡 Uprawnieniami możesz w dowolnym momencie zarządzać w ustawieniach przeglądarki (ikona kłódki 🔒 przy pasku adresu).
               </p>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSettings(false);
+                    setShowLegalModal(true);
+                  }}
+                  className="w-full py-2.5 px-3 border border-natural-border bg-white hover:bg-natural-highlight text-natural-dark text-xs font-bold rounded-xl shadow-2xs transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <FileText size={14} className="text-natural-secondary" />
+                  <span>Regulamin, Prywatność & Licencja WLDE</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -918,179 +934,47 @@ export default function App() {
                 Dziennik Pupila PWA • Zaprojektowane z myślą o miłośnikach zwierząt.
               </span>
               
-              <button
-                type="button"
-                onClick={() => setShowHelpModal(false)}
-                className="w-full sm:w-auto px-5 py-2 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition text-center cursor-pointer"
-              >
-                Rozumiem, zamknij pomoc
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowHelpModal(false);
+                    setShowLegalModal(true);
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 border border-natural-border bg-white hover:bg-natural-highlight text-natural-dark rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <FileText size={13} className="text-natural-secondary" />
+                  <span>Regulamin & Licencja WLDE</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowHelpModal(false)}
+                  className="w-full sm:w-auto px-5 py-2 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition text-center cursor-pointer"
+                >
+                  Zamknij pomoc
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Pierwsze uruchomienie - wymóg akceptacji regulaminu i licencji osobistej */}
-      {!termsAccepted && (
-        <div className="fixed inset-0 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-          <div className="bg-natural-sand rounded-3xl w-full max-w-xl border border-natural-border shadow-2xl p-6 flex flex-col space-y-5 animate-in zoom-in-95 duration-300 max-h-[92vh] overflow-hidden">
-            
-            {/* Header */}
-            <div className="text-center space-y-2 border-b border-natural-border/70 pb-4 shrink-0">
-              <span className="text-3xl animate-bounce inline-block">🐾</span>
-              <h2 className="text-xl font-serif font-extrabold text-natural-dark tracking-tight leading-tight">
-                Regulamin & Licencja Użytkowania
-              </h2>
-              <p className="text-[11px] text-natural-primary/75 font-semibold">
-                Wymagana jednorazowa akceptacja przed pierwszym uruchomieniem
-              </p>
-            </div>
+      {/* Pierwsze uruchomienie - wymóg akceptacji regulaminu i licencji WLDE */}
+      <LegalModal
+        isOpen={!termsAccepted}
+        isFirstRun={true}
+        onAccept={() => {
+          localStorage.setItem('DziennikPupila_termsAccepted', 'true');
+          setTermsAccepted(true);
+        }}
+      />
 
-            {/* Scrollable Document Content */}
-            <div className="flex-1 overflow-y-auto space-y-4 pr-1 text-xs text-natural-primary/85 leading-relaxed bg-white/50 border border-natural-border/50 rounded-2xl p-4 shadow-2xs">
-              
-              {/* Informacja o uprawnieniach urządzenia */}
-              <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-3.5 space-y-2 text-natural-dark shadow-2xs">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-amber-950">
-                    <Shield size={15} className="text-amber-700 shrink-0" />
-                    <span>Dlaczego program prosi o dostęp do Aparatu i Mikrofonu?</span>
-                  </div>
-                  <span className="text-[10px] text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded-md font-bold shrink-0">
-                    Prywatność
-                  </span>
-                </div>
-                
-                <p className="text-[11px] text-amber-900/90 leading-relaxed">
-                  Przy uruchomieniu przeglądarka wyświetla zapytanie o uprawnienia do <strong>aparatu (camera)</strong> oraz <strong>mikrofonu (microphone)</strong>. Aplikacja wykorzystuje je wyłącznie w następujących celach:
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
-                  <div className="bg-white/95 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
-                    <p className="font-extrabold text-natural-dark flex items-center gap-1">
-                      <Camera size={12} className="text-natural-secondary" />
-                      <span>Aparat fotograficzny</span>
-                    </p>
-                    <p className="text-natural-primary/80 leading-relaxed">
-                      Do robienia zdjęć pupila, fotografowania karmy, leków, postępów gojenia, zaleceń weterynarza oraz wyboru zdjęcia profilowego. Aparat uruchamia się wyłącznie po Twoim kliknięciu.
-                    </p>
-                  </div>
-
-                  <div className="bg-white/95 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
-                    <p className="font-extrabold text-natural-dark flex items-center gap-1">
-                      <Mic size={12} className="text-red-600" />
-                      <span>Mikrofon (Dyktowanie mowy)</span>
-                    </p>
-                    <p className="text-natural-primary/80 leading-relaxed">
-                      Do dyktowania głosowego wpisów pamiętnika w języku polskim. Pomocne, gdy trzymasz zwierzę na rękach i nie możesz pisać na klawiaturze. Dźwięk jest przetwarzany w locie i nie jest zapisywany.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-1 flex items-center gap-2 text-[10px] text-amber-950 font-medium">
-                  <Lock size={12} className="text-amber-700 shrink-0" />
-                  <span>Wszystkie operacje wykonują się <strong>w 100% lokalnie</strong> na Twoim urządzeniu. Żadne pliki ani nagrania nie są wysyłane do chmury.</span>
-                </div>
-              </div>
-
-              <h3 className="font-extrabold text-natural-dark font-serif text-sm">Regulamin Korzystania z Programu „Dziennik Pupila”</h3>
-              
-              <p>
-                Dziękujemy za wybranie „Dziennika Pupila” — Twojej bezpiecznej, osobistej bazy danych i pamiętnika dla ukochanych podopiecznych. Przed rozpoczęciem zapraszamy do zapoznania się z poniższymi zasadami korzystania.
-              </p>
-
-              <div className="space-y-3 pt-2">
-                <div>
-                  <h4 className="font-bold text-natural-secondary">§1. Bezpieczeństwo i Całkowita Prywatność (Offline-First)</h4>
-                  <p className="text-[11px] mt-0.5">
-                    Aplikacja zaprojektowana została w technologii Offline-First. Wszystkie wpisy, zdjęcia, odręczne rysunki oraz plany lekarskie i wagi są przechowywane na stałe wyłącznie w bezpiecznej bazie IndexedDB Twojej przeglądarki. Dane te nie są przekazywane na serwery – masz 100% kontroli i dyskrecji.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-natural-secondary">§2. Licencja na Użytek Osobisty i Niezarobkowy</h4>
-                  <p className="text-[11px] mt-0.5">
-                    Udziela się bezpłatnej, osobistej licencji na instalowanie i korzystanie z programu wyłącznie do celów prywatnych i rodzinnych związanych z opieką nad zwierzakami.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-natural-secondary">§3. Kategoryczny Zakaz Sprzedaży Oprogramowania</h4>
-                  <p className="text-[11px] mt-0.5 font-bold text-natural-dark">
-                    Zabrania się odsprzedaży, modyfikacji w celu odsprzedaży, licencjonowania, wynajmu oraz jakiejkolwiek formy odpłatnej dystrybucji kodu lub skompilowanego oprogramowania bez uprzedniej jednoznacznej pisemnej zgody autora.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-natural-secondary">§4. Odpowiedzialność Weterynaryjna</h4>
-                  <p className="text-[11px] mt-0.5">
-                    Moduł powiadomień oraz parser wykresów wagi stanowią funkcje pomocnicze. Nie służą jako wytyczna lekarska i nie zastępują opinii wykwalifikowanego weterynarza.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-natural-secondary">§5. Cel i Bezpieczeństwo Uprawnień Sprzętowych</h4>
-                  <p className="text-[11px] mt-0.5">
-                    Dostęp do aparatu fotograficznego, mikrofonu, powiadomień oraz bazy danych jest wykorzystywany wyłącznie lokalnie w Twojej przeglądarce. Aparat służy do dokumentowania stanu zdrowia i załączania zdjęć, mikrofon do zamiany mowy na tekst (dyktowanie głosowe), powiadomienia do przypomnień o lekach i wizytach, a baza IndexedDB do bezpiecznego lokalnego przechowywania wpisów. Aplikacja nie zbiera, nie nagrywa w tle ani nie wysyła żadnych danych audio/wideo na serwery zewnętrzne.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Checkboxes block */}
-            <div className="space-y-3 pt-1 shrink-0">
-              <label className="flex items-start gap-2.5 cursor-pointer select-none text-[11px] font-semibold text-natural-primary/95">
-                <input
-                  type="checkbox"
-                  id="agree-noncommercial"
-                  required
-                  className="rounded border-natural-border text-natural-secondary focus:ring-natural-secondary mt-0.5 h-3.5 w-3.5 shrink-0 cursor-pointer"
-                />
-                <span>
-                  Oświadczam, że będę używać aplikacji wyłącznie do celów osobistych i niekomercyjnych (zgodnie z licencją).
-                </span>
-              </label>
-
-              <label className="flex items-start gap-2.5 cursor-pointer select-none text-[11px] font-semibold text-natural-primary/95">
-                <input
-                  type="checkbox"
-                  id="agree-nosell"
-                  required
-                  className="rounded border-natural-border text-natural-secondary focus:ring-natural-secondary mt-0.5 h-3.5 w-3.5 shrink-0 cursor-pointer"
-                />
-                <span>
-                  Akceptuję bezwzględny zakaz komercyjnej odsprzedaży i dystrybucji bez pisemnej zgody autora.
-                </span>
-              </label>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="pt-2 shrink-0 border-t border-natural-border/70 flex flex-col space-y-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const ch1 = document.getElementById('agree-noncommercial') as HTMLInputElement;
-                  const ch2 = document.getElementById('agree-nosell') as HTMLInputElement;
-                  
-                  if (ch1 && ch2 && ch1.checked && ch2.checked) {
-                    localStorage.setItem('DziennikPupila_termsAccepted', 'true');
-                    setTermsAccepted(true);
-                  } else {
-                    alert('Proszę zaznaczyć obie wymagane zgody przed wejściem do programu!');
-                  }
-                }}
-                className="w-full py-2.5 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition text-center cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <span>Akceptuję regulamin i wchodzę do pamiętnika 🐾</span>
-              </button>
-              <p className="text-[10px] text-center text-natural-primary/55 font-semibold">
-                Dane są bezpiecznie składowane na Twoim urządzeniu. Modyfikuj i twórz bez obaw!
-              </p>
-            </div>
-
-          </div>
-        </div>
-      )}
+      {/* Przeglądanie regulaminu i licencji w dowolnym momencie (z Ustawień lub Pomocy) */}
+      <LegalModal
+        isOpen={showLegalModal}
+        isFirstRun={false}
+        onClose={() => setShowLegalModal(false)}
+      />
 
     </div>
   );
