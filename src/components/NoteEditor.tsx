@@ -76,11 +76,11 @@ export default function NoteEditor({
       rec.onerror = (event: any) => {
         console.error('Błąd rozpoznawania mowy:', event.error);
         if (event.error === 'not-allowed') {
-          setSpeechError('Brak uprawnień do mikrofonu. Zezwól na dostęp do mikrofonu w ustawieniach przeglądarki.');
+          setSpeechError('Brak uprawnień do mikrofonu. Kliknij ikonę kłódki 🔒 przy pasku adresu przeglądarki i włącz mikrofon, aby korzystać z dyktowania głosowego.');
         } else if (event.error === 'service-not-allowed') {
-          setSpeechError('Usługa rozpoznawania mowy jest obecnie niedostępna.');
+          setSpeechError('Usługa rozpoznawania mowy jest obecnie niedostępna w Twojej przeglądarce.');
         } else if (event.error === 'audio-capture') {
-          setSpeechError('Nie wykryto mikrofonu lub wystąpił błąd zapisu.');
+          setSpeechError('Nie wykryto mikrofonu lub wystąpił problem ze sprzętem audio.');
         } else if (event.error !== 'no-speech' && event.error !== 'aborted') {
           setSpeechError(`Błąd mowy: ${event.error}`);
         }
@@ -537,6 +537,7 @@ export default function NoteEditor({
               <button
                 type="button"
                 onClick={toggleListening}
+                title="Dyktuj głosowo treść wpisu po polsku (wymaga uprawnienia do mikrofonu). Dźwięk przetwarzany jest w locie i nie jest zapisywany."
                 className={`px-3 py-1 rounded-xl text-[10px] font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs border ${
                   isListening
                     ? 'bg-red-50 border-red-200 text-red-700 animate-pulse'
@@ -571,7 +572,7 @@ export default function NoteEditor({
             {isListening && (
               <div className="absolute bottom-3 right-3 text-[9px] font-bold text-red-600 flex items-center gap-1.5 bg-red-50/80 px-2 py-1 rounded-lg border border-red-100 backdrop-blur-xs pointer-events-none select-none">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping shrink-0" />
-                Dyktowanie włączone
+                Dyktowanie włączone (mikrofon aktywny)
               </div>
             )}
           </div>
@@ -584,19 +585,27 @@ export default function NoteEditor({
         </div>
 
         {/* Photo Upload with camera option */}
-        <div className="border border-natural-border rounded-2xl p-4 bg-natural-highlight/40">
-          <label className="block text-xs font-serif font-bold text-natural-dark uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <ImageIcon size={14} className="text-natural-secondary" />
-            Załącznik: Zdjęcie (np. z aparatu)
-          </label>
+        <div className="border border-natural-border rounded-2xl p-4 bg-natural-highlight/40 space-y-2">
+          <div className="flex items-center justify-between flex-wrap gap-1">
+            <label className="text-xs font-serif font-bold text-natural-dark uppercase tracking-wider flex items-center gap-1.5">
+              <ImageIcon size={14} className="text-natural-secondary" />
+              Załącznik: Zdjęcie (z aparatu lub pliku)
+            </label>
+            <span className="text-[10px] text-natural-primary/60 font-medium">
+              Aparat służy wyłącznie do dokumentowania stanu zdrowia i pupila
+            </span>
+          </div>
           
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             
             {/* Upload labels */}
             <div className="flex-1 flex gap-2">
-              <label className="cursor-pointer flex-1 flex items-center justify-center gap-1.5 px-4 py-2 border border-natural-border bg-white hover:bg-natural-highlight text-natural-primary text-xs font-semibold rounded-xl shadow-xs transition">
+              <label 
+                title="Zrób zdjęcie aparatem lub wybierz z galerii urządzenia (wymaga dostępu do aparatu)"
+                className="cursor-pointer flex-1 flex items-center justify-center gap-1.5 px-4 py-2 border border-natural-border bg-white hover:bg-natural-highlight text-natural-primary text-xs font-semibold rounded-xl shadow-xs transition"
+              >
                 <Camera size={14} className="text-natural-secondary" />
-                Wybierz plik / Aparat
+                Zrób zdjęcie / Wybierz plik
                 <input
                   type="file"
                   accept="image/*"

@@ -38,6 +38,11 @@ import {
   Mic,
   Activity,
   Image as ImageIcon,
+  Camera,
+  Bell,
+  Shield,
+  Lock,
+  Check,
 } from 'lucide-react';
 
 export default function App() {
@@ -424,6 +429,68 @@ export default function App() {
               </label>
 
             </div>
+
+            {/* Permissions & Privacy Card */}
+            <div className="pt-2 border-t border-natural-border/70 space-y-2">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-natural-dark flex items-center gap-1.5">
+                  <Shield size={14} className="text-natural-secondary" />
+                  Uprawnienia urządzenia i prywatność
+                </h4>
+                <span className="text-[10px] text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full font-bold">
+                  100% Offline-First
+                </span>
+              </div>
+              <p className="text-[11px] text-natural-primary/80 leading-relaxed">
+                Aplikacja korzysta z uprawnień urządzenia wyłącznie lokalnie w celu usprawnienia opieki nad pupilem:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div className="p-2.5 bg-white rounded-xl border border-natural-border/70 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-natural-dark text-[11px]">
+                    <Camera size={13} className="text-natural-secondary" />
+                    <span>Aparat fotograficzny</span>
+                  </div>
+                  <p className="text-[10px] text-natural-primary/75 leading-tight">
+                    Robienie zdjęć pupila na żywo, fotografowanie karmy, objawów, wagi i zaleceń weterynaryjnych.
+                  </p>
+                </div>
+
+                <div className="p-2.5 bg-white rounded-xl border border-natural-border/70 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-natural-dark text-[11px]">
+                    <Mic size={13} className="text-red-600" />
+                    <span>Mikrofon (Web Speech)</span>
+                  </div>
+                  <p className="text-[10px] text-natural-primary/75 leading-tight">
+                    Dyktowanie głosowe wpisów po polsku bez dotykania klawiatury. Dźwięk nie jest nagrywany na serwerach.
+                  </p>
+                </div>
+
+                <div className="p-2.5 bg-white rounded-xl border border-natural-border/70 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-natural-dark text-[11px]">
+                    <Bell size={13} className="text-amber-600" />
+                    <span>Powiadomienia Push</span>
+                  </div>
+                  <p className="text-[10px] text-natural-primary/75 leading-tight">
+                    Przypomnienia o lekach, szczepieniach, odrobaczeniach i obowiązkach z terminarza.
+                  </p>
+                </div>
+
+                <div className="p-2.5 bg-white rounded-xl border border-natural-border/70 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-natural-dark text-[11px]">
+                    <FolderSync size={13} className="text-blue-600" />
+                    <span>Pamięć lokalna (IndexedDB)</span>
+                  </div>
+                  <p className="text-[10px] text-natural-primary/75 leading-tight">
+                    Wszystkie dane, zdjęcia i szkice są bezpiecznie przechowywane w Twoim urządzeniu.
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-natural-primary/60 italic">
+                💡 Uprawnieniami możesz w dowolnym momencie zarządzać w ustawieniach przeglądarki (ikona kłódki 🔒 przy pasku adresu).
+              </p>
+            </div>
           </div>
         )}
 
@@ -766,6 +833,20 @@ export default function App() {
                       Wprowadź wage swojego pupila we wpisie z kategorii <strong>„Pomiary”</strong> (np. wpisując w tytule lub treści <em>„Waga: 6.2 kg”</em> lub <em>„przytył do 15kg”</em>). Nasz inteligentny parser wyciągnie dane i natychmiast uaktualni trend na interaktywnym wykresie.
                     </p>
                   </div>
+
+                  {/* Camera & Media Capture */}
+                  <div className="bg-white p-4 rounded-xl border border-natural-border/60 shadow-2xs space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="p-1 px-1.5 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-lg text-xs font-bold flex items-center gap-1">
+                        <Camera size={12} /> Media & Camera API
+                      </div>
+                      <span className="text-[10px] text-green-700 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded-md font-bold">Lokalne</span>
+                    </div>
+                    <p className="text-xs font-semibold text-natural-dark">Aparat fotograficzny i zdjęcia</p>
+                    <p className="text-[11px] text-natural-primary/75 leading-relaxed">
+                      Wygodne fotografowanie aparatem telefonu lub kamerą komputera: uwiecznianie pupila, karmy, wagi, zaleceń lekarskich oraz stanu skóry. Zdjęcia są optymalizowane i zachowywane lokalnie w pamięci urządzenia.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -810,6 +891,22 @@ export default function App() {
                       W sekcji <strong>„Zadania i Terminarz”</strong> możesz zaplanować dowolne zadanie jednorazowo lub cyklicznie. Zaznaczając <strong>„Planowanie cykliczne”</strong>, wybierzesz częstotliwość: <em>Codziennie, Od poniedziałku do piątku (dni robocze), Weekendy, Co tydzień (w wybrane dni), Co 2 tygodnie, Co 3 tygodnie (np. pazurki), Co miesiąc, Co 3 miesiące (odrobaczanie), Co rok (szczepienia)</em> lub <em>własny odstęp w dniach</em>. Możesz określić zakończenie po liczbie powtórzeń, do daty lub bezterminowo. Dodatkowo w zakładce <strong>„Checklista opieki”</strong> możesz jednym kliknięciem zaplanować rutynę na dziś lub na cały miesiąc w przód!
                     </p>
                   </div>
+
+                  <div className="bg-natural-highlight/40 border border-natural-border/50 rounded-xl p-3.5 text-xs text-natural-dark space-y-1.5">
+                    <span className="font-extrabold text-emerald-800 block">6. Uprawnienia urządzenia (Aparat, Mikrofon, Powiadomienia, Pamięć) – w jakim celu?</span>
+                    <p className="text-natural-primary leading-relaxed text-[11px]">
+                      Aplikacja prosi o uprawnienia wyłącznie w celu realizacji kluczowych funkcji wspomagających opiekę nad pupilem:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 text-[11px] text-natural-primary/85 mt-1">
+                      <li><strong>Aparat (Camera):</strong> Do robienia zdjęć pupila na żywo, fotografowania zaleceń weterynarza, karmy, wagi oraz ustawiania zdjęcia profilowego. Aparat uruchamia się wyłącznie wtedy, gdy sam klikniesz przycisk aparatu.</li>
+                      <li><strong>Mikrofon (Microphone):</strong> Do dyktowania notatek głosem po polsku (Web Speech API). Pozwala błyskawicznie zapisać obserwację, gdy trzymasz zwierzę obiema rękami. Mikrofon działa wyłącznie po kliknięciu ikony „Dyktuj głosowo”. Dźwięk nie jest nagrywany ani przesyłany na zewnętrzne serwery.</li>
+                      <li><strong>Powiadomienia (Notification API):</strong> Opcjonalne przypomnienia push o zbliżających się lub zaległych lekach, szczepieniach i wizytach z terminarza.</li>
+                      <li><strong>Pamięć lokalna (IndexedDB Storage):</strong> 100% Offline-First. Wszystkie wpisy, zdjęcia, historia wagi i szkice są bezpiecznie przechowywane na Twoim dysku z gwarancją prywatności.</li>
+                    </ul>
+                    <p className="text-[10px] text-natural-primary/70 italic mt-1">
+                      💡 Uprawnieniami możesz w dowolnym momencie zarządzać w przeglądarce, klikając ikonę kłódki 🔒 lub suwaków obok paska adresu.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -851,6 +948,51 @@ export default function App() {
 
             {/* Scrollable Document Content */}
             <div className="flex-1 overflow-y-auto space-y-4 pr-1 text-xs text-natural-primary/85 leading-relaxed bg-white/50 border border-natural-border/50 rounded-2xl p-4 shadow-2xs">
+              
+              {/* Informacja o uprawnieniach urządzenia */}
+              <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-3.5 space-y-2 text-natural-dark shadow-2xs">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-amber-950">
+                    <Shield size={15} className="text-amber-700 shrink-0" />
+                    <span>Dlaczego program prosi o dostęp do Aparatu i Mikrofonu?</span>
+                  </div>
+                  <span className="text-[10px] text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded-md font-bold shrink-0">
+                    Prywatność
+                  </span>
+                </div>
+                
+                <p className="text-[11px] text-amber-900/90 leading-relaxed">
+                  Przy uruchomieniu przeglądarka wyświetla zapytanie o uprawnienia do <strong>aparatu (camera)</strong> oraz <strong>mikrofonu (microphone)</strong>. Aplikacja wykorzystuje je wyłącznie w następujących celach:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
+                  <div className="bg-white/95 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+                    <p className="font-extrabold text-natural-dark flex items-center gap-1">
+                      <Camera size={12} className="text-natural-secondary" />
+                      <span>Aparat fotograficzny</span>
+                    </p>
+                    <p className="text-natural-primary/80 leading-relaxed">
+                      Do robienia zdjęć pupila, fotografowania karmy, leków, postępów gojenia, zaleceń weterynarza oraz wyboru zdjęcia profilowego. Aparat uruchamia się wyłącznie po Twoim kliknięciu.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/95 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+                    <p className="font-extrabold text-natural-dark flex items-center gap-1">
+                      <Mic size={12} className="text-red-600" />
+                      <span>Mikrofon (Dyktowanie mowy)</span>
+                    </p>
+                    <p className="text-natural-primary/80 leading-relaxed">
+                      Do dyktowania głosowego wpisów pamiętnika w języku polskim. Pomocne, gdy trzymasz zwierzę na rękach i nie możesz pisać na klawiaturze. Dźwięk jest przetwarzany w locie i nie jest zapisywany.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-1 flex items-center gap-2 text-[10px] text-amber-950 font-medium">
+                  <Lock size={12} className="text-amber-700 shrink-0" />
+                  <span>Wszystkie operacje wykonują się <strong>w 100% lokalnie</strong> na Twoim urządzeniu. Żadne pliki ani nagrania nie są wysyłane do chmury.</span>
+                </div>
+              </div>
+
               <h3 className="font-extrabold text-natural-dark font-serif text-sm">Regulamin Korzystania z Programu „Dziennik Pupila”</h3>
               
               <p>
@@ -883,6 +1025,13 @@ export default function App() {
                   <h4 className="font-bold text-natural-secondary">§4. Odpowiedzialność Weterynaryjna</h4>
                   <p className="text-[11px] mt-0.5">
                     Moduł powiadomień oraz parser wykresów wagi stanowią funkcje pomocnicze. Nie służą jako wytyczna lekarska i nie zastępują opinii wykwalifikowanego weterynarza.
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-natural-secondary">§5. Cel i Bezpieczeństwo Uprawnień Sprzętowych</h4>
+                  <p className="text-[11px] mt-0.5">
+                    Dostęp do aparatu fotograficznego, mikrofonu, powiadomień oraz bazy danych jest wykorzystywany wyłącznie lokalnie w Twojej przeglądarce. Aparat służy do dokumentowania stanu zdrowia i załączania zdjęć, mikrofon do zamiany mowy na tekst (dyktowanie głosowe), powiadomienia do przypomnień o lekach i wizytach, a baza IndexedDB do bezpiecznego lokalnego przechowywania wpisów. Aplikacja nie zbiera, nie nagrywa w tle ani nie wysyła żadnych danych audio/wideo na serwery zewnętrzne.
                   </p>
                 </div>
               </div>

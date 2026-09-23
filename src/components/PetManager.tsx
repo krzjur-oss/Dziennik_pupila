@@ -374,11 +374,14 @@ export default function PetManager({
                 </div>
 
                 <div className="flex-1">
-                  <label className="block text-xs font-serif font-bold text-natural-primary mb-1">Zdjęcie profilowe</label>
+                  <label className="block text-xs font-serif font-bold text-natural-primary mb-1">Zdjęcie profilowe (z aparatu lub pliku)</label>
                   <div className="flex items-center gap-2">
-                    <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 border border-natural-border bg-white hover:bg-natural-highlight text-natural-primary text-xs font-medium rounded-xl transition shadow-xs">
+                    <label 
+                      title="Zrób zdjęcie aparatem lub wybierz z galerii (aparat służy wyłącznie do ustawienia zdjęcia pupila)"
+                      className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 border border-natural-border bg-white hover:bg-natural-highlight text-natural-primary text-xs font-medium rounded-xl transition shadow-xs"
+                    >
                       <Camera size={13} className="text-natural-secondary" />
-                      Wybierz zdjęcie
+                      Zrób zdjęcie / Wybierz plik
                       <input
                         type="file"
                         accept="image/*"
@@ -396,7 +399,7 @@ export default function PetManager({
                       </button>
                     )}
                   </div>
-                  <p className="text-[10px] text-natural-clay mt-1">Szybko przeskalujemy i zoptymalizujemy pod offline</p>
+                  <p className="text-[10px] text-natural-clay mt-1">Zdjęcie zostanie zoptymalizowane i zapisane w 100% lokalnie w urządzeniu</p>
                 </div>
               </div>
 
