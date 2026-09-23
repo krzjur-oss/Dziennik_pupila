@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Shield,
   FileText,
@@ -13,9 +13,13 @@ import {
   ExternalLink,
   User,
   Heart,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  CheckCircle2,
+  RefreshCw
 } from 'lucide-react';
 import { APP_LEGAL, PERMISSIONS_EXPLANATION, TERMS_AND_CONDITIONS, SOFTWARE_LICENSE } from '../data/legalDocs';
+import { checkPermissionsStatus, requestAllPermissions, PermissionStatusSummary } from '../utils/permissionUtils';
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -34,8 +38,34 @@ export default function LegalModal({
   const [agreeNonCommercial, setAgreeNonCommercial] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // Permission grant state
+  const [isRequestingPermissions, setIsRequestingPermissions] = useState(false);
+  const [permissionSuccessNotice, setPermissionSuccessNotice] = useState<string | null>(null);
+  const [permStatus, setPermStatus] = useState<PermissionStatusSummary | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      checkPermissionsStatus().then(setPermStatus);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const handleGrantPermissions = async () => {
+    setIsRequestingPermissions(true);
+    setPermissionSuccessNotice(null);
+    try {
+      const result = await requestAllPermissions();
+      const updated = await checkPermissionsStatus();
+      setPermStatus(updated);
+      setPermissionSuccessNotice(result.message);
+    } catch (e) {
+      setPermissionSuccessNotice('Wystąpił problem przy wywołaniu zapytania o uprawnienia.');
+    } finally {
+      setIsRequestingPermissions(false);
+    }
+  };
 
   const handleConfirm = () => {
     if (!agreeNonCommercial || !agreeTerms) {
@@ -139,6 +169,54 @@ export default function LegalModal({
           {/* TAB 1: PERMISSIONS */}
           {activeTab === 'permissions' && (
             <div className="space-y-3.5 animate-in fade-in duration-200">
+              
+              {/* Sekcja aktywnego nadawania uprawnień jednym kliknięciem */}
+              <div className="bg-linear-to-r from-emerald-50 via-teal-50 to-amber-50 border border-emerald-200/90 rounded-2xl p-3.5 space-y-2.5 shadow-2xs">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 bg-emerald-600 text-white rounded-lg shadow-2xs">
+                      <Sparkles size={14} />
+                    </span>
+                    <div>
+                      <h4 className="font-serif font-extrabold text-xs sm:text-sm text-emerald-950">
+                        Automatyczne nadanie uprawnień
+                      </h4>
+                      <p className="text-[10px] text-emerald-800">
+                        Kliknij poniższy przycisk, aby przeglądarka wyświetliła zapytania i odblokowała moduły programu.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleGrantPermissions}
+                    disabled={isRequestingPermissions}
+                    className="flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
+                  >
+                    {isRequestingPermissions ? (
+                      <>
+                        <RefreshCw size={14} className="animate-spin" />
+                        <span>Oczekiwanie na decyzję w oknie przeglądarki...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Shield size={14} />
+                        <span>Nadaj potrzebne uprawnienia (Aparat, Mikrofon, Powiadomienia)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {permissionSuccessNotice && (
+                  <div className="p-2.5 bg-white/90 border border-emerald-300 rounded-xl text-[10px] font-semibold text-emerald-900 flex items-center gap-1.5 animate-in fade-in">
+                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                    <span>{permissionSuccessNotice}</span>
+                  </div>
+                )}
+              </div>
+
               <div className="bg-amber-50/90 border border-amber-200/90 rounded-2xl p-3.5 space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="font-serif font-bold text-natural-dark text-xs sm:text-sm flex items-center gap-1.5 text-amber-950">
@@ -294,6 +372,32 @@ export default function LegalModal({
                 <span>{errorMessage}</span>
               </p>
             )}
+
+            {/* Szybki przycisk nadania uprawnień również bezpośrednio w stopce przed zatwierdzeniem */}
+            <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-2.5 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-950">
+                <Shield size={14} className="text-emerald-700 shrink-0" />
+                <span>Nadaj uprawnienia (Aparat, Mikrofon, Alert):</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleGrantPermissions}
+                disabled={isRequestingPermissions}
+                className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0 disabled:opacity-50"
+              >
+                {isRequestingPermissions ? (
+                  <>
+                    <RefreshCw size={12} className="animate-spin" />
+                    <span>Zezwól w oknie...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={12} />
+                    <span>Kliknij, aby nadać uprawnienia</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             <label className="flex items-start gap-2.5 cursor-pointer select-none text-[11px] font-semibold text-natural-dark">
               <input

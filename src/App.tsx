@@ -19,6 +19,7 @@ import PhotoGallery from './components/PhotoGallery';
 import WeightChart from './components/WeightChart';
 import HealthCalendar from './components/HealthCalendar';
 import LegalModal from './components/LegalModal';
+import { requestAllPermissions } from './utils/permissionUtils';
 import {
   Heart,
   Plus,
@@ -44,6 +45,7 @@ import {
   Shield,
   Lock,
   Check,
+  RefreshCw,
 } from 'lucide-react';
 
 export default function App() {
@@ -70,6 +72,8 @@ export default function App() {
   // Backup state
   const [showSettings, setShowSettings] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isRequestingPermsInSettings, setIsRequestingPermsInSettings] = useState(false);
+  const [settingsPermNotice, setSettingsPermNotice] = useState<string | null>(null);
 
   // Load health events on mount
   useEffect(() => {
@@ -447,6 +451,49 @@ export default function App() {
                 Aplikacja korzysta z uprawnień urządzenia wyłącznie lokalnie w celu usprawnienia opieki nad pupilem:
               </p>
               
+              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-3 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 font-bold text-natural-dark text-xs">
+                    <Sparkles size={14} className="text-emerald-700 shrink-0" />
+                    <span>Szybkie nadanie uprawnień</span>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isRequestingPermsInSettings}
+                    onClick={async () => {
+                      setIsRequestingPermsInSettings(true);
+                      setSettingsPermNotice(null);
+                      try {
+                        const res = await requestAllPermissions();
+                        setSettingsPermNotice(res.message);
+                      } catch {
+                        setSettingsPermNotice('Wystąpił problem przy wywołaniu zapytania o uprawnienia.');
+                      } finally {
+                        setIsRequestingPermsInSettings(false);
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs disabled:opacity-50"
+                  >
+                    {isRequestingPermsInSettings ? (
+                      <>
+                        <RefreshCw size={12} className="animate-spin" />
+                        <span>Zapytanie w toku...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Shield size={12} />
+                        <span>Nadaj uprawnienia (Aparat, Mikrofon, Alert)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                {settingsPermNotice && (
+                  <p className="text-[10px] text-emerald-900 bg-white/90 p-2 rounded-lg border border-emerald-200 font-medium">
+                    {settingsPermNotice}
+                  </p>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <div className="p-2.5 bg-white rounded-xl border border-natural-border/70 space-y-0.5">
                   <div className="flex items-center gap-1.5 font-bold text-natural-dark text-[11px]">
