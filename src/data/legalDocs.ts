@@ -18,7 +18,7 @@ export const APP_LEGAL: LegalDocumentConfig = {
   author: 'mgr Krzysztof Jureczek',
   email: 'kjureczek@proton.me',
   github: 'github.com/krzjur-oss',
-  licenseName: 'Wolna Licencja Domowo-Edukacyjna (Zastrzeżona) — WLDE',
+  licenseName: 'Wolna Licencja Użytku Prywatnego (Zastrzeżona) — WLUP',
   appUrl: typeof window !== 'undefined' ? window.location.origin : 'https://ais-pre-oop667jjyzp5h4vgx2ldbf-176196111507.europe-west3.run.app'
 };
 
@@ -26,7 +26,7 @@ export const PERMISSIONS_EXPLANATION = {
   title: 'Dlaczego program prosi o dostęp do Aparatu i Mikrofonu?',
   subtitle: 'Wyjaśnienie celów uprawnień przy pierwszym uruchomieniu aplikacji',
   badge: '100% Prywatności i Offline-First',
-  intro: 'Przy uruchomieniu przeglądarka wyświetla zapytanie o dostęp do aparatu (camera) oraz mikrofonu (microphone). Aplikacja została stworzona zgodnie z filozofią Offline-First i wykorzystuje te moduły wyłącznie lokalnie na Twoim urządzeniu w następujących celach:',
+  intro: 'Przy uruchomieniu przeglądarka wyświetla zapytanie o dostęp do aparatu (camera) oraz mikrofonu (microphone). Aplikacja została stworzona zgodnie z filozofią Offline-First i wykorzystuje te moduły wyłącznie lokalnie na Twoim urządzeniu w celach prywatnych:',
   items: [
     {
       id: 'camera',
@@ -73,26 +73,24 @@ export const TERMS_AND_CONDITIONS = `
 
 ## § 1. Postanowienia ogólne
 
-1. Niniejszy Regulamin określa zasady korzystania z aplikacji **„Dziennik Pupila”** (dalej: „Aplikacja”), dostępnej pod adresem strony lub instalowanej jako aplikacja PWA na urządzeniu Użytkownika.
+1. Niniejszy Regulamin określa zasady korzystania z aplikacji **„Dziennik Pupila”** (dalej: „Aplikacja”), dostępnej pod adresem internetowym wdrożenia oraz jako instalowana aplikacja PWA w pamięci urządzenia.
 2. Właścicielem, twórcą i jedynym autorem Aplikacji jest **mgr Krzysztof Jureczek** (dalej: „Autor”).
-3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Domowo-Edukacyjnej (Zastrzeżonej) — WLDE**. Regulamin i Licencja stanowią całość i obowiązują łącznie.
+3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP**. Regulamin i Licencja stanowią całość i obowiązują łącznie.
 4. Korzystanie z Aplikacji oznacza pełną akceptację niniejszego Regulaminu oraz Licencji.
 
 ---
 
 ## § 2. Przeznaczenie Aplikacji
 
-Aplikacja przeznaczona jest wyłącznie do:
-1. **Użytku domowego / prywatnego** — korzystanie przez osoby fizyczne w celach własnych, w tym do prowadzenia osobistego dziennika zdrowia, pomiarów wagi, pielęgnacji, terminarza szczepień i leków oraz opieki nad własnymi zwierzętami domowymi, w celach samokształceniowych i hobbystycznych.
-2. **Użytku edukacyjnego** — wykorzystanie w placówkach oświatowych (przedszkola, szkoły, uczelnie, świetlice, placówki opiekuńczo-wychowawcze i terapeutyczne) w ramach zajęć dydaktycznych, edukacji przyrodniczej i warsztatów odpowiedzialnej opieki nad zwierzętami.
-
-Wszelkie inne zastosowania, w tym komercyjne, zarobkowe czy odsprzedażowe, wymagają uprzedniej pisemnej zgody Autora.
+Aplikacja przeznaczona jest **wyłącznie do Użytku prywatnego / osobistego**:
+1. Korzystanie przez osoby fizyczne w celach ściśle własnych i rodzinnych, w tym do prowadzenia osobistego dziennika zdrowia, pomiarów wagi, pielęgnacji, terminarza szczepień i leków oraz opieki nad własnymi zwierzętami domowymi.
+2. Wszelkie inne zastosowania — w tym komercyjne, gospodarcze, zarobkowe, instytucjonalne lub publiczne — są zabronione i wymagają uprzedniej, odrębnej pisemnej zgody Autora.
 
 ---
 
 ## § 3. Zasady korzystania
 
-1. Aplikacja jest całkowicie bezpłatna dla zakresu wskazanego w § 2.
+1. Aplikacja jest całkowicie bezpłatna dla zakresu prywatnego wskazanego w § 2.
 2. Aplikacja nie zawiera reklam, ukrytych opłat, mikropłatności ani płatnych subskrypcji.
 3. Użytkownik zobowiązuje się korzystać z Aplikacji zgodnie z jej przeznaczeniem oraz obowiązującym prawem.
 4. Zabronione jest podejmowanie działań mogących zakłócić działanie Aplikacji lub narazić innych użytkowników na szkodę.
@@ -101,17 +99,17 @@ Wszelkie inne zastosowania, w tym komercyjne, zarobkowe czy odsprzedażowe, wyma
 
 ## § 4. Prawa autorskie i licencja
 
-Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wizualny, moduły interaktywne, szablony opieki nad gatunkami, treści i dokumentacja — należą wyłącznie do Autora i są chronione prawem autorskim.
+Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wizualny, moduły interaktywne, szablony opieki, treści i dokumentacja — należą wyłącznie do Autora i są chronione prawem autorskim.
 
 * ❌ **Zabronione:** Kopiowanie, modyfikowanie, dekompilowanie, rozpowszechnianie, sprzedaż lub komercjalizacja Aplikacji bądź jej części bez pisemnej zgody Autora.
-* ✅ **Dozwolone:** Korzystanie z Aplikacji zgodnie z jej przeznaczeniem prywatnym i edukacyjnym (§ 2), instalowanie na urządzeniach własnych oraz udostępnianie linku do Aplikacji innym osobom.
+* ✅ **Dozwolone:** Korzystanie z Aplikacji zgodnie z jej przeznaczeniem wyłącznie prywatnym (§ 2), instalowanie na urządzeniach własnych oraz udostępnianie linku do Aplikacji innym osobom fizycznym do ich użytku prywatnego.
 
 ---
 
 ## § 5. Dane i prywatność (RODO/GDPR)
 
 1. Aplikacja **nie wymaga rejestracji, zakładania konta ani logowania** i nie zbiera żadnych danych osobowych na zewnętrznych serwerach.
-2. Dane wprowadzane do Aplikacji (profile pupili, imiona, historia wpisów pamiętnika, pomiary wagi, odręczne szkice i rysunki medyczne, zdjęcia oraz zaplanowane zadania zdrowotne i terminarz) przechowywane są **wyłącznie lokalnie w pamięci przeglądarki użytkownika** (\`IndexedDB\` oraz \`localStorage\`) i nigdy nie opuszczają jego urządzenia.
+2. Dane wprowadzane do Aplikacji (profile pupili, imiona, historia wpisów pamiętnika, pomiary wagi, odręczne szkice i rysunki medyczne, zdjęcia oraz zaplanowane zadania zdrowotne i terminarz) przechowywane są **wyłącznie lokalnie w pamięci urządzenia użytkownika** (\`IndexedDB\` oraz \`localStorage\`) i nigdy nie opuszczają jego urządzenia.
 3. Administratorem danych wprowadzanych do programu jest wyłącznie Użytkownik końcowy (opiekun zwierzęcia) — Autor nie ma jakiegokolwiek dostępu do tych danych.
 4. Aplikacja nie używa profilujących plików cookie, narzędzi śledzących telemetrycznych ani komercyjnych sieci analitycznych.
 5. Użytkownik może w każdej chwili usunąć swoje dane, czyszcząc pamięć podręczną przeglądarki lub korzystając z funkcji eksportu kopii zapasowej w formacie JSON.
@@ -121,7 +119,7 @@ Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wi
 ## § 6. Wyjaśnienie uprawnień sprzętowych (Aparat, Mikrofon, Powiadomienia)
 
 1. **Aparat fotograficzny:** Służy wyłącznie do bezpośredniego uwieczniania zdjęć pupila, karmy, postępów leczenia oraz wyboru awatara.
-2. **Mikrofon:** Używany jest opcjonalnie do zamiany mowy na tekst (dyktowanie głosowe w języku polskim) w celu ułatwienia sporządzania notatek w trakcie opieki. Aplikacja nie nagrywa głosu w tle.
+2. **Mikrofon:** Używany jest opcjonalnie do zamiany mowy na tekst (dyktowanie głosowe w języku polskim) w celu ułatwienia sporządzania prywatnych notatek w trakcie opieki. Aplikacja nie nagrywa głosu w tle i nie wysyła nagrań na serwery.
 3. **Powiadomienia:** Służą do wyświetlania lokalnych alertów o zaplanowanych lekach, badaniach i obowiązkach pielęgnacyjnych.
 
 ---
@@ -130,7 +128,7 @@ Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wi
 
 1. Aplikacja udostępniana jest w stanie „takim, jakim jest” (*as is*), bez jakichkolwiek gwarancji.
 2. Funkcje terminarza, checklisty pielęgnacyjnej oraz wykresów wagi mają charakter wyłącznie informacyjny i pomocniczy. **Nie stanowią one porady medyczno-weterynaryjnej i nie zastępują badania ani diagnozy wykwalifikowanego lekarza weterynarii.**
-3. Autor nie ponosi odpowiedzialności za utratę danych, błędy działania, awarie sprzętu lub szkody wynikające z korzystania bądź niemożności korzystania z Aplikacji. Zaleca się regularne pobieranie kopii zapasowej (plik .json z menu ustawień).
+3. Autor nie ponosi odpowiedzialności za utratę danych, błędy działania, awarie sprzętu lub szkody wynikające z korzystania bądź niemożności korzystania z Aplikacji. Zaleca się regularne tworzenie kopii zapasowych (plik .json z menu ustawień).
 
 ---
 
@@ -145,7 +143,7 @@ mgr Krzysztof Jureczek · E-mail: kjureczek@proton.me · GitHub: github.com/krzj
 
 export const SOFTWARE_LICENSE = `
 # LICENCJA UŻYTKOWANIA OPROGRAMOWANIA
-## Wolna Licencja Domowo-Edukacyjna (Zastrzeżona) — WLDE
+## Wolna Licencja Użytku Prywatnego (Zastrzeżona) — WLUP
 
 ### Projekt: Dziennik Pupila (wersja 1.2.0 i wyższe)
 
@@ -159,7 +157,7 @@ Kontakt: kjureczek@proton.me · GitHub: github.com/krzjur-oss
 
 ### PREAMBUŁA
 
-Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu **„Dziennik Pupila”**. Intencją Autora jest bezpłatne udostępnienie aplikacji do użytku domowego (prywatnego) oraz placówkom edukacyjnym, przy jednoczesnym pełnym zachowaniu praw autorskich, integralności kodu źródłowego oraz kategorycznym zakazie jakiejkolwiek komercjalizacji, kopiowania, modyfikacji w celach dystrybucyjnych i odsprzedaży Oprogramowania bez pisemnej zgody Autora.
+Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu **„Dziennik Pupila”**. Intencją Autora jest bezpłatne udostępnienie aplikacji do wyłącznego użytku prywatnego (osobistego i rodzinnego), przy jednoczesnym pełnym zachowaniu praw autorskich, integralności kodu źródłowego oraz kategorycznym zakazie jakiejkolwiek komercjalizacji, odsprzedaży, kopiowania, modyfikacji w celach dystrybucyjnych i wykorzystania komercyjnego bez pisemnej zgody Autora.
 
 ---
 
@@ -167,24 +165,22 @@ Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu
 
 1. **Oprogramowanie** – aplikacja „Dziennik Pupila” wraz z całym kodem źródłowym, plikami wykonywalnymi, interfejsem graficznym, szablonami opieki, zasobami multimedialnymi oraz dokumentacją.
 2. **Autor / Licencjodawca** – mgr Krzysztof Jureczek, jedyny twórca i wyłączny dysponent autorskich praw majątkowych i osobistych do Oprogramowania.
-3. **Użytkownik / Licencjobiorca** – każda osoba fizyczna korzystająca z Oprogramowania w celach domowych/prywatnych, a także każda szkoła, przedszkole, uczelnia lub inna placówka oświatowo-wychowawcza korzystająca z Oprogramowania w celach dydaktycznych.
+3. **Użytkownik / Licencjobiorca** – każda osoba fizyczna korzystająca z Oprogramowania wyłącznie w celach prywatnych, osobistych lub rodzinnych.
 
 ---
 
 ### § 2. DOZWOLONY UŻYTEK (BEZPŁATNY)
 
-Autor udziela Użytkownikowi bezpłatnej, niewyłącznej, nieprzenoszalnej i ograniczonej licencji na korzystanie z Oprogramowania wyłącznie w następujących celach:
+Autor udziela Użytkownikowi bezpłatnej, niewyłącznej, nieprzenoszalnej i ściśle ograniczonej licencji na korzystanie z Oprogramowania wyłącznie w następującym celu:
 
-1. **Użytek domowy / prywatny** – instalowanie i uruchamianie Oprogramowania przez osoby fizyczne na własny, niekomercyjny użytek, w tym prowadzenie pamiętnika, monitorowanie zdrowia pupili, rozrywka i samokształcenie.
-2. **Użytek edukacyjny** – wykorzystanie Oprogramowania w placówkach oświatowych (przedszkola, szkoły podstawowe i ponadpodstawowe, uczelnie wyższe, świetlice, placówki opiekuńczo-wychowawcze i terapeutyczne) na zajęciach, lekcjach i warsztatach.
-3. **Instalacja lokalna** – uruchamianie i przechowywanie Oprogramowania w trybie offline/PWA na urządzeniach własnych Użytkownika lub placówki.
-4. **Prezentacje niekomercyjne** – publiczne demonstrowanie działania Oprogramowania w celach popularyzacji wiedzy i technologii, pod warunkiem wyraźnego wskazania autorstwa.
+1. **Użytek prywatny / osobisty** – instalowanie i uruchamianie Oprogramowania przez osoby fizyczne na własny, prywatny, niekomercyjny użytek do prowadzenia pamiętnika, monitorowania zdrowia, pielęgnacji i wagi własnych zwierząt domowych.
+2. **Instalacja lokalna** – uruchamianie i przechowywanie Oprogramowania w trybie offline/PWA na urządzeniach własnych Użytkownika.
 
 ---
 
 ### § 3. ZAKAZY I OGRANICZENIA
 
-Wszelkie działania wykraczające poza § 2 wymagają uprzedniej, pisemnej zgody Autora. W szczególności **surowo zabrania się**:
+Wszelkie działania wykraczające poza użytek prywatny określony w § 2 wymagają uprzedniej, pisemnej zgody Autora. W szczególności **surowo zabrania się**:
 
 1. **Kopiowania kodu** – kopiowania, powielania, pobierania w celu redystrybucji, dekompilacji lub inżynierii wstecznej kodu źródłowego lub skompilowanych plików Oprogramowania.
 2. **Modyfikacji** – wprowadzania zmian w kodzie źródłowym, interfejsie, grafice, logotypach, treściach lub innych zasobach Oprogramowania z zamiarem ich dalszej redystrybucji.

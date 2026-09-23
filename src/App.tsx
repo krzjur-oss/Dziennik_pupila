@@ -503,7 +503,7 @@ export default function App() {
                   className="w-full py-2.5 px-3 border border-natural-border bg-white hover:bg-natural-highlight text-natural-dark text-xs font-bold rounded-xl shadow-2xs transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <FileText size={14} className="text-natural-secondary" />
-                  <span>Regulamin, Prywatność & Licencja WLDE</span>
+                  <span>Regulamin, Prywatność & Licencja WLUP</span>
                 </button>
               </div>
             </div>
@@ -944,7 +944,7 @@ export default function App() {
                   className="w-full sm:w-auto px-4 py-2 border border-natural-border bg-white hover:bg-natural-highlight text-natural-dark rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <FileText size={13} className="text-natural-secondary" />
-                  <span>Regulamin & Licencja WLDE</span>
+                  <span>Regulamin & Licencja WLUP</span>
                 </button>
                 <button
                   type="button"

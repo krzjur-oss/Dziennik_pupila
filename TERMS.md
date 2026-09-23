@@ -8,24 +8,22 @@
 
 1. Niniejszy Regulamin określa zasady korzystania z aplikacji **„Dziennik Pupila”** (dalej: „Aplikacja”), dostępnej pod adresem internetowym wdrożenia oraz jako zainstalowana aplikacja PWA w pamięci urządzenia.
 2. Właścicielem, twórcą i jedynym autorem Aplikacji jest **mgr Krzysztof Jureczek** (dalej: „Autor”).
-3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Domowo-Edukacyjnej (Zastrzeżonej) — WLDE** (pełna treść w pliku `LICENSE.md`). Regulamin i Licencja stanowią całość i obowiązują łącznie.
+3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP** (pełna treść w pliku `LICENSE.md`). Regulamin i Licencja stanowią całość i obowiązują łącznie.
 4. Korzystanie z Aplikacji oznacza pełną akceptację niniejszego Regulaminu oraz Licencji.
 
 ---
 
 ## § 2. Przeznaczenie Aplikacji
 
-Aplikacja przeznaczona jest wyłącznie do:
-1. **Użytku domowego / prywatnego** — korzystanie przez osoby fizyczne w celach własnych, w tym do prowadzenia osobistego dziennika zdrowia, pomiarów wagi, pielęgnacji, terminarza szczepień i leków oraz opieki nad własnymi zwierzętami domowymi, w celach samokształceniowych i hobbystycznych.
-2. **Użytku edukacyjnego** — wykorzystanie w placówkach oświatowych (przedszkola, szkoły, uczelnie, świetlice, placówki opiekuńczo-wychowawcze i terapeutyczne) w ramach zajęć dydaktycznych, edukacji przyrodniczej i warsztatów odpowiedzialnej opieki nad zwierzętami.
-
-Wszelkie inne zastosowania, w tym komercyjne, zarobkowe czy odsprzedażowe, wymagają uprzedniej pisemnej zgody Autora.
+Aplikacja przeznaczona jest **wyłącznie do Użytku prywatnego / osobistego**:
+1. Korzystanie przez osoby fizyczne w celach ściśle własnych i rodzinnych, w tym do prowadzenia osobistego dziennika zdrowia, pomiarów wagi, pielęgnacji, terminarza szczepień i leków oraz opieki nad własnymi zwierzętami domowymi.
+2. Wszelkie inne zastosowania — w tym komercyjne, gospodarcze, zarobkowe, instytucjonalne lub publiczne — są zabronione i wymagają uprzedniej, odrębnej pisemnej zgody Autora.
 
 ---
 
 ## § 3. Zasady korzystania
 
-1. Aplikacja jest całkowicie bezpłatna dla zakresu wskazanego w § 2.
+1. Aplikacja jest całkowicie bezpłatna dla zakresu prywatnego wskazanego w § 2.
 2. Aplikacja nie zawiera reklam, ukrytych opłat, mikropłatności ani płatnych subskrypcji.
 3. Użytkownik zobowiązuje się korzystać z Aplikacji zgodnie z jej przeznaczeniem oraz obowiązującym prawem.
 4. Zabronione jest podejmowanie działań mogących zakłócić działanie Aplikacji lub narazić innych użytkowników na szkodę.
@@ -39,7 +37,7 @@ Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wi
 | | |
 |---|---|
 | ❌ **Zabronione** | Kopiowanie, modyfikowanie, dekompilowanie, rozpowszechnianie, sprzedaż lub komercjalizacja Aplikacji bądź jej części bez pisemnej zgody Autora |
-| ✅ **Dozwolone** | Korzystanie z Aplikacji zgodnie z jej przeznaczeniem prywatnym i edukacyjnym (§ 2), instalowanie na urządzeniach własnych oraz udostępnianie linku do Aplikacji innym osobom |
+| ✅ **Dozwolone** | Korzystanie z Aplikacji zgodnie z jej przeznaczeniem wyłącznie prywatnym (§ 2), instalowanie na urządzeniach własnych oraz udostępnianie linku do Aplikacji innym osobom fizycznym do ich użytku prywatnego |
 
 Szczegółowe warunki licencyjne określa plik `LICENSE.md`. W sprawach zgody na inne wykorzystanie prosimy o kontakt z Autorem.
 
@@ -48,9 +46,9 @@ Szczegółowe warunki licencyjne określa plik `LICENSE.md`. W sprawach zgody na
 ## § 5. Dane i prywatność (RODO/GDPR)
 
 1. Aplikacja **nie wymaga rejestracji, zakładania konta ani logowania** i nie zbiera żadnych danych osobowych na zewnętrznych serwerach.
-2. Dane wprowadzane do Aplikacji (profile pupili, imiona, historia wpisów pamiętnika, pomiary wagi, odręczne szkice i rysunki medyczne, zdjęcia oraz zaplanowane zadania zdrowotne i terminarz) przechowywane są **wyłącznie lokalnie w pamięci przeglądarki użytkownika** (`IndexedDB` oraz `localStorage`) i nigdy nie opuszczają jego urządzenia.
-3. Administratorem danych osobowych i użytkowych wprowadzanych do programu jest wyłącznie Użytkownik końcowy (opiekun zwierzęcia) — Autor nie ma technicznego ani faktycznego dostępu do tych danych.
-4. Aplikacja nie używa profilujących plików cookie, narzędzi śledzących telemetrycznych ani sieci reklamowych.
+2. Dane wprowadzane do Aplikacji (profile pupili, imiona, historia wpisów pamiętnika, pomiary wagi, odręczne szkice i rysunki medyczne, zdjęcia oraz zaplanowane zadania zdrowotne i terminarz) przechowywane są **wyłącznie lokalnie w pamięci urządzenia użytkownika** (`IndexedDB` oraz `localStorage`) i nigdy nie opuszczają jego urządzenia.
+3. Administratorem danych wprowadzanych do programu jest wyłącznie Użytkownik końcowy (opiekun zwierzęcia) — Autor nie ma technicznego ani faktycznego dostępu do tych danych.
+4. Aplikacja nie używa profilujących plików cookie, narzędzi śledzących telemetrycznych ani komercyjnych sieci analitycznych.
 5. Użytkownik może w każdej chwili usunąć swoje dane, czyszcząc pamięć podręczną przeglądarki lub korzystając z funkcji eksportu kopii zapasowej w formacie JSON.
 
 ---
@@ -58,7 +56,7 @@ Szczegółowe warunki licencyjne określa plik `LICENSE.md`. W sprawach zgody na
 ## § 6. Wyjaśnienie uprawnień sprzętowych (Aparat, Mikrofon, Powiadomienia)
 
 1. **Aparat fotograficzny:** Służy wyłącznie do bezpośredniego uwieczniania zdjęć pupila, karmy, postępów leczenia oraz wyboru awatara.
-2. **Mikrofon:** Używany jest opcjonalnie do zamiany mowy na tekst (dyktowanie głosowe w języku polskim) w celu ułatwienia sporządzania notatek w trakcie opieki. Aplikacja nie nagrywa głosu w tle i nie wysyła nagrań na serwery.
+2. **Mikrofon:** Używany jest opcjonalnie do zamiany mowy na tekst (dyktowanie głosowe w języku polskim) w celu ułatwienia sporządzania prywatnych notatek w trakcie opieki. Aplikacja nie nagrywa głosu w tle i nie wysyła nagrań na serwery.
 3. **Powiadomienia:** Służą do wyświetlania lokalnych alertów o zaplanowanych lekach, badaniach i obowiązkach pielęgnacyjnych.
 
 ---
@@ -78,7 +76,7 @@ Szczegółowe warunki licencyjne określa plik `LICENSE.md`. W sprawach zgody na
 
 ---
 
-**Kontakt:**
+**Kontakt z Autorem:**
 mgr Krzysztof Jureczek · kjureczek@proton.me · github.com/krzjur-oss
 
 *© 2026 Krzysztof Jureczek · Wszelkie prawa zastrzeżone*

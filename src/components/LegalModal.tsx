@@ -116,7 +116,7 @@ export default function LegalModal({
             }`}
           >
             <Scale size={13} className={activeTab === 'license' ? 'text-indigo-600' : 'opacity-60'} />
-            <span>Licencja WLDE</span>
+            <span>Licencja WLUP</span>
           </button>
 
           <button
@@ -207,12 +207,12 @@ export default function LegalModal({
             </div>
           )}
 
-          {/* TAB 3: SOFTWARE LICENSE WLDE */}
+          {/* TAB 3: SOFTWARE LICENSE WLUP */}
           {activeTab === 'license' && (
             <div className="space-y-3 font-sans leading-relaxed text-[11px] animate-in fade-in duration-200">
               <div className="border-b border-natural-border/70 pb-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
                 <h3 className="font-serif font-extrabold text-indigo-950 text-sm">
-                  Wolna Licencja Domowo-Edukacyjna (Zastrzeżona) — WLDE
+                  Wolna Licencja Użytku Prywatnego (Zastrzeżona) — WLUP
                 </h3>
                 <p className="text-[10px] text-indigo-800 font-semibold mt-0.5">
                   Projekt: {APP_LEGAL.appName} • Właściciel praw autorskich: {APP_LEGAL.author}
@@ -246,7 +246,7 @@ export default function LegalModal({
                   </div>
                 </div>
                 <p className="text-[11px] text-natural-dark leading-relaxed pt-1">
-                  Program „{APP_LEGAL.appName}” został stworzony jako bezpłatne, bezpieczne narzędzie dla miłośników i opiekunów zwierząt domowych oraz placówek oświatowych.
+                  Program „{APP_LEGAL.appName}” został stworzony jako bezpłatne, bezpieczne narzędzie do wyłącznego użytku prywatnego dla opiekunów zwierząt domowych.
                 </p>
               </div>
 
@@ -306,7 +306,7 @@ export default function LegalModal({
                 className="rounded border-natural-border text-natural-secondary focus:ring-natural-secondary mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
               />
               <span className="leading-snug">
-                Oświadczam, że będę używać aplikacji wyłącznie do celów domowych / prywatnych lub edukacyjnych, z poszanowaniem praw autorskich mgr. Krzysztofa Jureczka.
+                Oświadczam, że będę używać aplikacji wyłącznie do osobistego użytku prywatnego, z poszanowaniem praw autorskich mgr. Krzysztofa Jureczka.
               </span>
             </label>
 
@@ -321,7 +321,7 @@ export default function LegalModal({
                 className="rounded border-natural-border text-natural-secondary focus:ring-natural-secondary mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
               />
               <span className="leading-snug">
-                Zapoznałem(-am) się i akceptuję Regulamin, Politykę Prywatności oraz warunki Wolnej Licencji Domowo-Edukacyjnej (Zastrzeżonej) — WLDE.
+                Zapoznałem(-am) się i akceptuję Regulamin, Politykę Prywatności oraz warunki Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP.
               </span>
             </label>
 

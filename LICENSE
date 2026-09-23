@@ -1,5 +1,5 @@
 # LICENCJA UŻYTKOWANIA OPROGRAMOWANIA
-## Wolna Licencja Domowo-Edukacyjna (Zastrzeżona) — WLDE
+## Wolna Licencja Użytku Prywatnego (Zastrzeżona) — WLUP
 
 ### Projekt: Dziennik Pupila (wersja 1.2.0 i wyższe)
 
@@ -13,7 +13,7 @@ Kontakt: kjureczek@proton.me · GitHub: github.com/krzjur-oss
 
 ### PREAMBUŁA
 
-Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu **„Dziennik Pupila”**. Intencją Autora jest bezpłatne udostępnienie aplikacji do użytku domowego (prywatnego) oraz placówkom edukacyjnym, przy jednoczesnym pełnym zachowaniu praw autorskich, integralności kodu źródłowego oraz zakazie jakiejkolwiek komercjalizacji, kopiowania, modyfikacji i rozpowszechniania Oprogramowania bez pisemnej zgody Autora.
+Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu **„Dziennik Pupila”**. Intencją Autora jest bezpłatne udostępnienie aplikacji do wyłącznego użytku prywatnego (osobistego i rodzinnego), przy jednoczesnym pełnym zachowaniu praw autorskich, integralności kodu źródłowego oraz zakazie jakiejkolwiek komercjalizacji, kopiowania, modyfikacji i rozpowszechniania Oprogramowania bez pisemnej zgody Autora.
 
 ---
 
@@ -21,18 +21,16 @@ Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu
 
 1. **Oprogramowanie** – aplikacja „Dziennik Pupila” wraz z całym kodem źródłowym, plikami wykonywalnymi, grafiką, zasobami multimedialnymi oraz dokumentacją.
 2. **Autor / Licencjodawca** – mgr Krzysztof Jureczek, jedyny twórca i wyłączny dysponent autorskich praw majątkowych i osobistych do Oprogramowania.
-3. **Użytkownik / Licencjobiorca** – każda osoba fizyczna korzystająca z Oprogramowania w celach domowych/prywatnych, a także każda szkoła, przedszkole, uczelnia lub inna placówka oświatowo-wychowawcza korzystająca z Oprogramowania w celach dydaktycznych.
+3. **Użytkownik / Licencjobiorca** – każda osoba fizyczna korzystająca z Oprogramowania wyłącznie w celach prywatnych, osobistych lub rodzinnych.
 
 ---
 
 ### § 2. DOZWOLONY UŻYTEK (BEZPŁATNY)
 
-Autor udziela Użytkownikowi bezpłatnej, niewyłącznej, nieprzenoszalnej i ograniczonej licencji na korzystanie z Oprogramowania wyłącznie w następujących celach:
+Autor udziela Użytkownikowi bezpłatnej, niewyłącznej, nieprzenoszalnej i ściśle ograniczonej licencji na korzystanie z Oprogramowania wyłącznie w następujących celach:
 
-1. **Użytek domowy / prywatny** – instalowanie i uruchamianie Oprogramowania przez osoby fizyczne na własny, niekomercyjny użytek, w tym cele rozrywkowe, prowadzenie pamiętnika, monitorowanie zdrowia pupili i samokształcenie.
-2. **Użytek edukacyjny** – wykorzystanie Oprogramowania w placówkach oświatowych (przedszkola, szkoły podstawowe i ponadpodstawowe, uczelnie wyższe, świetlice, placówki opiekuńczo-wychowawcze i terapeutyczne) na zajęciach, lekcjach, wykładach i kołach zainteresowań.
-3. **Instalacja lokalna** – uruchamianie i przechowywanie Oprogramowania (w tym w trybie offline/PWA) na urządzeniach własnych Użytkownika lub placówki.
-4. **Prezentacje niekomercyjne** – publiczne demonstrowanie działania Oprogramowania w celach popularyzacji nauki, odpowiedzialnej opieki nad zwierzętami i technologii, pod warunkiem wyraźnego wskazania autorstwa.
+1. **Użytek prywatny / osobisty** – instalowanie i uruchamianie Oprogramowania przez osoby fizyczne na własny, niekomercyjny użytek, w tym prowadzenie pamiętnika, monitorowanie zdrowia, pielęgnacji i wagi własnych zwierząt domowych.
+2. **Instalacja lokalna** – uruchamianie i przechowywanie Oprogramowania (w tym w trybie offline/PWA) na urządzeniach własnych Użytkownika.
 
 ---
 
