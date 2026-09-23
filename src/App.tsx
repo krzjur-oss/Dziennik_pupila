@@ -81,18 +81,29 @@ export default function App() {
     localStorage.setItem('DziennikPupila_healthEvents', JSON.stringify(events));
   };
 
-  const handleAddHealthEvent = (eventData: Omit<HealthEvent, 'id' | 'petId' | 'createdAt' | 'isCompleted'>) => {
-    if (!activePetId) return;
-    const newEvent: HealthEvent = {
-      ...eventData,
-      id: Date.now().toString(36) + Math.random().toString(36).substring(2, 5),
+  const handleAddHealthEvents = (
+    eventsData: Array<Omit<HealthEvent, 'id' | 'petId' | 'createdAt' | 'isCompleted'>>
+  ) => {
+    if (!activePetId || eventsData.length === 0) return;
+    const now = Date.now();
+    const newEvents: HealthEvent[] = eventsData.map((data, idx) => ({
+      ...data,
+      id: `${now.toString(36)}_${idx}_${Math.random().toString(36).substring(2, 6)}`,
       petId: activePetId,
       isCompleted: false,
-      createdAt: Date.now()
-    };
-    const updated = [...healthEvents, newEvent];
+      createdAt: now + idx,
+    }));
+    const updated = [...healthEvents, ...newEvents];
     saveHealthEventsToStorage(updated);
-    triggerSuccessAlert(`Zaplanowano wydarzenie: ${newEvent.title}!`);
+    if (newEvents.length > 1) {
+      triggerSuccessAlert(`Zaplanowano ${newEvents.length} powtórzeń zadania: ${newEvents[0].title}!`);
+    } else {
+      triggerSuccessAlert(`Zaplanowano zadanie: ${newEvents[0].title}!`);
+    }
+  };
+
+  const handleAddHealthEvent = (eventData: Omit<HealthEvent, 'id' | 'petId' | 'createdAt' | 'isCompleted'>) => {
+    handleAddHealthEvents([eventData]);
   };
 
   const handleToggleHealthEventComplete = (id: string) => {
@@ -108,10 +119,21 @@ export default function App() {
     }
   };
 
-  const handleDeleteHealthEvent = (id: string) => {
-    const updated = healthEvents.filter(e => e.id !== id);
-    saveHealthEventsToStorage(updated);
-    triggerSuccessAlert('Usunięto wydarzenie z kalendarza.');
+  const handleDeleteHealthEvent = (id: string, deleteSeries = false) => {
+    const targetEvent = healthEvents.find(e => e.id === id);
+    let updated: HealthEvent[];
+
+    if (deleteSeries && targetEvent?.recurrenceGroupId) {
+      const groupId = targetEvent.recurrenceGroupId;
+      const count = healthEvents.filter(e => e.recurrenceGroupId === groupId).length;
+      updated = healthEvents.filter(e => e.recurrenceGroupId !== groupId);
+      saveHealthEventsToStorage(updated);
+      triggerSuccessAlert(`Usunięto całą serię powtórzeń (${count} zadań).`);
+    } else {
+      updated = healthEvents.filter(e => e.id !== id);
+      saveHealthEventsToStorage(updated);
+      triggerSuccessAlert('Usunięto zadanie z terminarza.');
+    }
   };
 
   // Load pets on startup
@@ -511,6 +533,7 @@ export default function App() {
                     activePet={activePet}
                     events={healthEvents}
                     onAddEvent={handleAddHealthEvent}
+                    onAddEvents={handleAddHealthEvents}
                     onToggleComplete={handleToggleHealthEventComplete}
                     onDeleteEvent={handleDeleteHealthEvent}
                   />
@@ -778,6 +801,13 @@ export default function App() {
                     <span className="font-extrabold text-natural-secondary block">4. Praca na kilku urządzeniach i kopie zapasowe danych</span>
                     <p className="text-natural-primary leading-relaxed text-[11px]">
                       Dziennik działa lokalnie, więc profile zapisane na komputerze nie pojawią się automatycznie na telefonie. Aby to zrobić bez przesyłania danych do chmur korporacyjnych, kliknij ikonę <strong>„Koła zębatego (Ustawienia)”</strong> w prawym górnym rogu. Kliknij <strong>„Pobierz kopię zapasową (.json)”</strong>. Prześlij ten plik na drugie urządzenie, a tam w tym samym menu wybierz <strong>„Przywróć dane z pliku kopii”</strong>. Dane zostaną bezstratnie scalone.
+                    </p>
+                  </div>
+
+                  <div className="bg-natural-highlight/40 border border-natural-border/50 rounded-xl p-3.5 text-xs text-natural-dark space-y-1.5">
+                    <span className="font-extrabold text-indigo-700 block">5. Planowanie cykliczne zadań i checklista opieki</span>
+                    <p className="text-natural-primary leading-relaxed text-[11px]">
+                      W sekcji <strong>„Zadania i Terminarz”</strong> możesz zaplanować dowolne zadanie jednorazowo lub cyklicznie. Zaznaczając <strong>„Planowanie cykliczne”</strong>, wybierzesz częstotliwość: <em>Codziennie, Od poniedziałku do piątku (dni robocze), Weekendy, Co tydzień (w wybrane dni), Co 2 tygodnie, Co 3 tygodnie (np. pazurki), Co miesiąc, Co 3 miesiące (odrobaczanie), Co rok (szczepienia)</em> lub <em>własny odstęp w dniach</em>. Możesz określić zakończenie po liczbie powtórzeń, do daty lub bezterminowo. Dodatkowo w zakładce <strong>„Checklista opieki”</strong> możesz jednym kliknięciem zaplanować rutynę na dziś lub na cały miesiąc w przód!
                     </p>
                   </div>
                 </div>
