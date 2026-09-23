@@ -1,4 +1,4 @@
-export type SpeciesType = 'pies' | 'kot' | 'jaszczurka' | 'chomik' | 'papuga' | 'krolik' | 'rybki' | 'inne';
+export type SpeciesType = 'pies' | 'kot' | 'swinka_morska' | 'krolik' | 'chomik' | 'papuga' | 'jaszczurka' | 'rybki' | 'inne';
 
 export interface Pet {
   id: string;

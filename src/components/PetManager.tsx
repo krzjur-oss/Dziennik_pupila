@@ -324,11 +324,12 @@ export default function PetManager({
                 >
                   <option value="pies">🐶 Pies</option>
                   <option value="kot">🐱 Kot</option>
-                  <option value="jaszczurka">🦎 Jaszczurka / Gad</option>
-                  <option value="chomik">🐹 Chomik / Gryzoń</option>
-                  <option value="papuga">🦜 Papuga / Ptak</option>
+                  <option value="swinka_morska">🐹 Świnka morska / Kawia domowa</option>
                   <option value="krolik">🐰 Królik</option>
-                  <option value="rybki">🐠 Rybki</option>
+                  <option value="chomik">🐹 Chomik / Mały gryzoń</option>
+                  <option value="papuga">🦜 Papuga / Ptak</option>
+                  <option value="jaszczurka">🦎 Jaszczurka / Gad</option>
+                  <option value="rybki">🐠 Rybki / Akwarium</option>
                   <option value="inne">🐾 Inne zwierzątko</option>
                 </select>
               </div>

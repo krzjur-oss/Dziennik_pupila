@@ -11,7 +11,7 @@ import {
   exportDatabase,
   importDatabase,
 } from './lib/db';
-import { getSpeciesEmoji, calculateAgeInPolish } from './utils';
+import { getSpeciesEmoji, calculateAgeInPolish, getSpeciesLabel } from './utils';
 import PetManager from './components/PetManager';
 import NoteEditor from './components/NoteEditor';
 import NoteList from './components/NoteList';
@@ -437,10 +437,8 @@ export default function App() {
                     <h2 className="text-2xl font-serif font-bold text-white tracking-tight leading-none">
                       {activePet.name}
                     </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-natural-highlight border border-white/20 capitalize shrink-0">
-                      {activePet.species === 'inne' && activePet.customSpecies
-                        ? activePet.customSpecies
-                        : `${getSpeciesEmoji(activePet.species)} ${activePet.species}`}
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-natural-highlight border border-white/20 shrink-0">
+                      {`${getSpeciesEmoji(activePet.species)} ${getSpeciesLabel(activePet.species, activePet.customSpecies)}`}
                     </span>
                   </div>
 

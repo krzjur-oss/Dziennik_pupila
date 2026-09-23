@@ -48,7 +48,7 @@ export default function WeightChart({ entries, petName }: WeightChartProps) {
             Monitorowanie wagi pupila
           </h4>
           <p className="text-[11px] text-natural-primary/60 mt-1 max-w-xs mx-auto leading-relaxed">
-            Nie zarejestrowano jeszcze danych wagowych dla <strong>{petName}</strong>. Dodaj wpis w kategorii <strong>„Waga / Wymiary”</strong> z podaną wagą (np. <em>14.5 kg</em>), aby aktywować wykres.
+            Nie zarejestrowano jeszcze danych wagowych dla <strong>{petName}</strong>. Dodaj wpis w kategorii <strong>„Waga / Wymiary”</strong> z podaną wagą (np. <em>14.5 kg</em> lub <em>950 g</em>), aby aktywować wykres.
           </p>
         </div>
       </div>
@@ -79,9 +79,11 @@ export default function WeightChart({ entries, petName }: WeightChartProps) {
   const weights = chartData.map((d) => d.weight);
   const minWeight = Math.min(...weights);
   const maxWeight = Math.max(...weights);
-  const marginBuffer = Math.max((maxWeight - minWeight) * 0.15, 0.5); // At least 0.5kg padding
+  // Support small animals (< 2kg like guinea pigs, hamsters) with tighter padding
+  const marginBuffer = Math.max((maxWeight - minWeight) * 0.15, maxWeight < 2 ? 0.05 : 0.5);
 
   const latestWeight = chartData[chartData.length - 1].weight;
+  const isSmallPetWeight = latestWeight < 1.5;
   
   // Calculate weight difference if at least 2 measurements exist
   let weightDiff = 0;
@@ -91,6 +93,21 @@ export default function WeightChart({ entries, petName }: WeightChartProps) {
     weightDiff = latestWeight - previousWeight;
     hasDiff = true;
   }
+
+  const formatWeightValue = (w: number) => {
+    if (w < 1.5) {
+      return `${Math.round(w * 1000)} g`;
+    }
+    return `${w.toFixed(1)} kg`;
+  };
+
+  const formatDiffValue = (diff: number) => {
+    if (Math.abs(diff) < 1) {
+      const g = Math.round(diff * 1000);
+      return `${g > 0 ? '+' : ''}${g} g`;
+    }
+    return `${diff > 0 ? '+' : ''}${diff.toFixed(2)} kg`;
+  };
 
   return (
     <div className="bg-natural-cream rounded-3xl border border-natural-border p-5 shadow-xs space-y-4">
@@ -111,19 +128,26 @@ export default function WeightChart({ entries, petName }: WeightChartProps) {
         {/* Current Weight Bubble */}
         <div className="text-right">
           <div className="text-sm font-serif font-extrabold text-natural-dark flex items-center gap-1 justify-end">
-            <span>{latestWeight.toFixed(1)}</span>
-            <span className="text-xs text-natural-secondary font-sans font-normal">kg</span>
+            <span>{isSmallPetWeight ? Math.round(latestWeight * 1000) : latestWeight.toFixed(1)}</span>
+            <span className="text-xs text-natural-secondary font-sans font-normal">
+              {isSmallPetWeight ? 'g' : 'kg'}
+            </span>
+            {isSmallPetWeight && (
+              <span className="text-[10px] text-natural-primary/50 font-normal">
+                ({latestWeight.toFixed(2)} kg)
+              </span>
+            )}
           </div>
           
           {hasDiff && (
             <div className="flex items-center gap-0.5 justify-end mt-0.5 text-[10px] font-bold">
               {weightDiff > 0 ? (
                 <span className="text-amber-700 flex items-center gap-0.5 bg-amber-50/50 px-1.5 py-0.5 rounded-md border border-amber-250/20">
-                  <TrendingUp size={10} /> +{weightDiff.toFixed(2)} kg
+                  <TrendingUp size={10} /> {formatDiffValue(weightDiff)}
                 </span>
               ) : weightDiff < 0 ? (
                 <span className="text-natural-olive flex items-center gap-0.5 bg-natural-highlight/60 px-1.5 py-0.5 rounded-md border border-natural-border/40">
-                  <TrendingDown size={10} /> {weightDiff.toFixed(2)} kg
+                  <TrendingDown size={10} /> {formatDiffValue(weightDiff)}
                 </span>
               ) : (
                 <span className="text-natural-primary/60 flex items-center gap-0.5 bg-neutral-50 px-1.5 py-0.5 rounded-md border border-neutral-100">
@@ -180,19 +204,28 @@ export default function WeightChart({ entries, petName }: WeightChartProps) {
                 fontSize={10}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `${value.toFixed(1)}`}
+                tickFormatter={(value) => (maxWeight < 2 ? `${Math.round(value * 1000)}g` : `${value.toFixed(1)}`)}
               />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
+                    const isSmall = data.weight < 1.5;
                     return (
                       <div className="bg-white border border-natural-border/70 rounded-2xl p-2.5 shadow-md text-xs space-y-1 z-50">
                         <p className="text-[10px] font-bold text-natural-primary/50">
                           {formatTooltipDate(data.dateStr)} {data.timeStr ? `• ${data.timeStr}` : ''}
                         </p>
                         <p className="font-serif font-extrabold text-natural-dark text-sm">
-                          Waga: <span className="text-natural-secondary">{data.weight.toFixed(1)} kg</span>
+                          Waga:{' '}
+                          <span className="text-natural-secondary">
+                            {isSmall ? `${Math.round(data.weight * 1000)} g` : `${data.weight.toFixed(2)} kg`}
+                          </span>
+                          {isSmall && (
+                            <span className="text-[10px] text-natural-primary/50 font-normal ml-1">
+                              ({data.weight.toFixed(2)} kg)
+                            </span>
+                          )}
                         </p>
                       </div>
                     );

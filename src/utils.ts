@@ -154,18 +154,47 @@ export function getSpeciesEmoji(species: string): string {
       return '🐶';
     case 'kot':
       return '🐱';
-    case 'jaszczurka':
-      return '🦎';
+    case 'swinka_morska':
+      return '🐹';
+    case 'krolik':
+      return '🐰';
     case 'chomik':
       return '🐹';
     case 'papuga':
       return '🦜';
-    case 'krolik':
-      return '🐰';
+    case 'jaszczurka':
+      return '🦎';
     case 'rybki':
       return '🐠';
     default:
       return '🐾';
+  }
+}
+
+// Get user-friendly Polish species name
+export function getSpeciesLabel(species: string, customSpecies?: string): string {
+  if (species === 'inne' && customSpecies) {
+    return customSpecies;
+  }
+  switch (species.toLowerCase()) {
+    case 'pies':
+      return 'Pies';
+    case 'kot':
+      return 'Kot';
+    case 'swinka_morska':
+      return 'Świnka morska (Kawia)';
+    case 'krolik':
+      return 'Królik';
+    case 'chomik':
+      return 'Chomik / Gryzoń';
+    case 'papuga':
+      return 'Papuga / Ptak';
+    case 'jaszczurka':
+      return 'Jaszczurka / Gad';
+    case 'rybki':
+      return 'Rybki / Akwarium';
+    default:
+      return 'Inne zwierzę';
   }
 }
 
