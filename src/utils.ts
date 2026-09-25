@@ -1,50 +1,21 @@
 import { DiaryEntry } from './types';
+import { parseLegacyWeightKg } from './utils/weightParser';
 
 // Extract numeric weight and unit from a diary entry
 export function extractWeightWithUnit(entry: DiaryEntry): { value: number; unit: 'kg' | 'g' } | null {
-  const text = `${entry.title} ${entry.content}`.toLowerCase();
-  
-  // Look for weight patterns
-  const matches = [
-    /waga:?\s*(\d+(?:[.,]\d+)?)\s*(kg|g|kilogram[a-z]*|gram[a-z]*)?/i,
-    /(\d+(?:[.,]\d+)?)\s*(kg|g|kilogram[a-z]*|gram[a-z]*)?/i
-  ];
-
-  for (const regex of matches) {
-    const match = text.match(regex);
-    if (match) {
-      const hasWagaWord = text.includes('waga');
-      const unitPart = match[2];
-      const hasExplicitUnit = unitPart && /^(kg|g|kilogram[a-z]*|gram[a-z]*)$/i.test(unitPart);
-      
-      if (hasWagaWord || hasExplicitUnit) {
-        const valStr = match[1].replace(',', '.');
-        const val = parseFloat(valStr);
-        if (!isNaN(val) && val > 0) {
-          const isGram = unitPart && /^(g|gram[a-z]*)$/i.test(unitPart);
-          return {
-            value: val,
-            unit: isGram ? 'g' : 'kg'
-          };
-        }
-      }
+  if (entry.weightKg != null && !isNaN(entry.weightKg) && entry.weightKg > 0) {
+    if (entry.weightKg < 1) {
+      return { value: Math.round(entry.weightKg * 1000), unit: 'g' };
     }
+    return { value: entry.weightKg, unit: 'kg' };
   }
 
-  // If category is pomiary, look for any standalone number representing weight or dimension
-  if (entry.category === 'pomiary') {
-    const fallbackRegex = /(\d+(?:[.,]\d+)?)/;
-    const match = text.match(fallbackRegex);
-    if (match) {
-      const valStr = match[1].replace(',', '.');
-      const val = parseFloat(valStr);
-      if (!isNaN(val) && val > 0 && val < 500) {
-        return {
-          value: val,
-          unit: 'kg'
-        };
-      }
+  const legacyKg = parseLegacyWeightKg(`${entry.title} ${entry.content}`);
+  if (legacyKg != null) {
+    if (legacyKg < 1) {
+      return { value: Math.round(legacyKg * 1000), unit: 'g' };
     }
+    return { value: legacyKg, unit: 'kg' };
   }
 
   return null;
@@ -52,38 +23,62 @@ export function extractWeightWithUnit(entry: DiaryEntry): { value: number; unit:
 
 // Extract numeric weight in kilograms from a diary entry
 export function extractWeight(entry: DiaryEntry): number | null {
-  const parsed = extractWeightWithUnit(entry);
-  if (!parsed) return null;
-  if (parsed.unit === 'g') {
-    return parsed.value / 1000;
+  if (entry.weightKg != null && !isNaN(entry.weightKg) && entry.weightKg > 0) {
+    return entry.weightKg;
   }
-  return parsed.value;
+  return parseLegacyWeightKg(`${entry.title} ${entry.content}`);
 }
 
-// Polish translation utility for pet age calculation
-export function calculateAgeInPolish(birthDateString?: string): string {
+// Polish translation utility for pet age calculation with day precision and future check
+export function calculateAgeInPolish(birthDateString?: string, referenceDate: Date = new Date()): string {
   if (!birthDateString) return 'Nie podano wieku';
-  
-  const birth = new Date(birthDateString);
-  const now = new Date();
-  
+
+  const birthParts = birthDateString.split('-');
+  if (birthParts.length !== 3) return 'Błędna data urodzenia';
+  const birthYear = parseInt(birthParts[0], 10);
+  const birthMonth = parseInt(birthParts[1], 10) - 1;
+  const birthDay = parseInt(birthParts[2], 10);
+
+  const birth = new Date(birthYear, birthMonth, birthDay, 12, 0, 0);
   if (isNaN(birth.getTime())) return 'Błędna data urodzenia';
-  
-  let years = now.getFullYear() - birth.getFullYear();
-  let months = now.getMonth() - birth.getMonth();
-  
+
+  const nowYear = referenceDate.getFullYear();
+  const nowMonth = referenceDate.getMonth();
+  const nowDay = referenceDate.getDate();
+  const nowMid = new Date(nowYear, nowMonth, nowDay, 12, 0, 0);
+
+  if (birth.getTime() > nowMid.getTime()) {
+    return 'Data z przyszłości';
+  }
+
+  let years = nowYear - birthYear;
+  let months = nowMonth - birthMonth;
+  let days = nowDay - birthDay;
+
+  if (days < 0) {
+    months--;
+  }
+
   if (months < 0) {
     years--;
     months += 12;
   }
-  
+
+  if (years === 0 && months === 0) {
+    const diffTime = Math.abs(nowMid.getTime() - birth.getTime());
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Dziś urodzony';
+    if (diffDays === 1) return '1 dzień';
+    return `${diffDays} dni`;
+  }
+
   // Custom pluralization rules in Polish
   if (years === 0) {
     if (months === 1) return '1 miesiąc';
     if (months > 1 && months < 5) return `${months} miesiące`;
     return `${months} miesięcy`;
   }
-  
+
   let ageStr = '';
   if (years === 1) {
     ageStr = '1 rok';
@@ -92,13 +87,13 @@ export function calculateAgeInPolish(birthDateString?: string): string {
   } else {
     ageStr = `${years} lat`;
   }
-  
+
   if (months > 0) {
     if (months === 1) ageStr += ' i 1 miesiąc';
     else if (months > 1 && months < 5) ageStr += ` i ${months} miesiące`;
     else ageStr += ` i ${months} miesięcy`;
   }
-  
+
   return ageStr;
 }
 
@@ -114,7 +109,7 @@ export function compressImageToBase64(file: File, maxWOrH: number = 900): Promis
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
-        
+
         // Scale proportionally
         if (width > height) {
           if (width > maxWOrH) {
@@ -127,16 +122,17 @@ export function compressImageToBase64(file: File, maxWOrH: number = 900): Promis
             height = maxWOrH;
           }
         }
-        
+
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          reject(new Error('Failed to get canvas 2D context'));
+          resolve(event.target?.result as string);
           return;
         }
-        
+
         ctx.drawImage(img, 0, 0, width, height);
+
         // Expose as JPEG with 75% quality for excellent weight/fidelity ratio
         const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
         resolve(compressedBase64);

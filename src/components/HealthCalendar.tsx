@@ -145,6 +145,9 @@ export default function HealthCalendar({
   // Saved cleaning days for this pet (e.g. ['Śr', 'Sob'])
   const [cleaningDays, setCleaningDays] = useState<string[]>(() => {
     try {
+      if (activePet.cleaningDays && Array.isArray(activePet.cleaningDays)) {
+        return activePet.cleaningDays;
+      }
       const stored = localStorage.getItem(`cleaning_days_${activePet.id}`);
       return stored ? JSON.parse(stored) : ['Sob'];
     } catch {
@@ -181,7 +184,7 @@ export default function HealthCalendar({
       if (permission === 'granted') {
         new Notification("Dziennik Pupila", {
           body: "Powiadomienia systemowe zostały pomyślnie włączone!",
-          icon: "/favicon.ico"
+          icon: "./app_icon.png"
         });
       }
     } catch (error) {
@@ -194,7 +197,7 @@ export default function HealthCalendar({
       try {
         new Notification(`Test powiadomień: ${activePet.name}`, {
           body: `Przypomnienie dla pupila ${activePet.name} jest aktywne!`,
-          icon: activePet.avatar || "/favicon.ico"
+          icon: activePet.avatar || "./app_icon.png"
         });
       } catch (err) {
         console.warn("Notification error:", err);

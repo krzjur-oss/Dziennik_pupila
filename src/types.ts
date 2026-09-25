@@ -9,6 +9,8 @@ export interface Pet {
   avatar?: string; // base64
   notes?: string;
   createdAt: number;
+  updatedAt?: number;
+  cleaningDays?: string[]; // migrated from localStorage cleaning_days_<petId>
 }
 
 export type CategoryType = 'zdrowie' | 'jedzenie' | 'weterynarz' | 'aktywnosc' | 'pielegnacja' | 'pomiary' | 'notatka';
@@ -50,9 +52,11 @@ export interface HealthEvent {
   notes?: string;
   isCompleted: boolean;
   createdAt: number;
+  updatedAt?: number;
   recurrence?: RecurrenceRule;
   recurrenceGroupId?: string;
   recurrenceLabel?: string;
+  templateId?: string;
 }
 
 export interface DiaryEntry {
@@ -63,8 +67,11 @@ export interface DiaryEntry {
   category: CategoryType;
   title: string;
   content: string;
-  photo?: string; // base64
-  drawing?: string; // base64 representation of stylus sketch
+  photo?: string; // base64 or legacy
+  drawing?: string; // base64 or legacy
+  photoId?: string; // Media store reference
+  drawingId?: string; // Media store reference
+  weightKg?: number; // Normalized weight in kg
   dimensions?: {
     length?: number; // cm
     chest?: number;  // cm
@@ -72,4 +79,11 @@ export interface DiaryEntry {
     height?: number; // cm
   };
   createdAt: number;
+  updatedAt?: number;
+}
+
+export interface MediaItem {
+  id: string;
+  blob: Blob;
+  mime: string;
 }

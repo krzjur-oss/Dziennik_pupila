@@ -246,7 +246,11 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
       const anchorDay = start.getDate();
       let yearOffset = 0;
       while (results.length < targetCount) {
-        const next = new Date(start.getFullYear() + yearOffset, anchorMonth, anchorDay, 12, 0, 0);
+        const targetYear = start.getFullYear() + yearOffset;
+        const daysInTargetMonth = new Date(targetYear, anchorMonth + 1, 0).getDate();
+        const clampedDay = Math.min(anchorDay, daysInTargetMonth);
+        const next = new Date(targetYear, anchorMonth, clampedDay, 12, 0, 0);
+
         if (endLimitDate && next > endLimitDate) break;
         results.push(formatDateToYMD(next));
         yearOffset++;
@@ -325,6 +329,7 @@ export function formatRecurrenceLabel(rule: RecurrenceRule): string {
 
 /**
  * Smart suggestion of recurrence rule based on task title, notes, or frequency hints
+ * Uses word-boundary matching so words like "Krok" don't trigger "rok" and "za tydzień" doesn't trigger "weekly".
  */
 export function suggestRecurrenceFromTask(
   title: string,
@@ -333,26 +338,66 @@ export function suggestRecurrenceFromTask(
 ): RecurrenceRule {
   const text = `${title} ${notes || ''} ${frequencyHint || ''}`.toLowerCase();
 
-  // High-confidence patterns
-  if (text.includes('pazur') || text.includes('3-4 tyg') || text.includes('3–4 tyg') || text.includes('3 tygodn')) {
+  // Explicit non-recurring phrases
+  if (/\bza tydzień\b|\bza 2 tygodnie\b|\bza miesiąc\b|\bza rok\b/.test(text)) {
+    return { frequency: 'none', endType: 'forever' };
+  }
+
+  // 3-4 weeks (nails, grooming cycle)
+  if (/\bpazur\w*/.test(text) || text.includes('3-4 tyg') || text.includes('3–4 tyg') || /\bco 3 tygodn\w*/.test(text)) {
     return { frequency: 'every_3_weeks', endType: 'forever' };
   }
-  if (text.includes('szczepien') || text.includes('wściekl') || text.includes('pomor') || text.includes('myksomatoz') || text.includes('rok') || text.includes('coroczn')) {
+
+  // Yearly (vaccines, rabies, annual checkups) - note \brok\b or \broczn\w* avoiding "krok", "wyrok", etc.
+  if (
+    /\bszczepien\w*/.test(text) ||
+    /\bwściekli\w*/.test(text) ||
+    /\bpomor\w*/.test(text) ||
+    /\bmyksomatoz\w*/.test(text) ||
+    /\broczn\w*/.test(text) ||
+    /\bco rok\b/.test(text)
+  ) {
     return { frequency: 'yearly', endType: 'forever' };
   }
-  if (text.includes('odrobacz') || text.includes('pasożyt') || text.includes('kleszcz') || text.includes('3 mies')) {
+
+  // 3 months (deworming, anti-parasitic)
+  if (
+    /\bodrobacz\w*/.test(text) ||
+    /\bpasożyt\w*/.test(text) ||
+    /\bkleszcz\w*/.test(text) ||
+    text.includes('3 mies') ||
+    text.includes('kwartal')
+  ) {
     return { frequency: 'every_3_months', endType: 'forever' };
   }
-  if (text.includes('wag') || text.includes('ważeń') || text.includes('tydzień') || text.includes('tygodni')) {
+
+  // Weekly (weight control, weekly cleaning) - requires "co tydzień" or "ważenie" or "waga"
+  if (
+    /\bco tydzień\b|\bco tydzien\b|\btygodniow\w*/.test(text) ||
+    /\bważeni\w*/.test(text) ||
+    /\bkontrola wagi\b/.test(text)
+  ) {
     return { frequency: 'weekly', endType: 'forever' };
   }
-  if (text.includes('robocz') || text.includes('poniedziałku do piątku') || text.includes('pn-pt')) {
+
+  // Weekdays
+  if (/\brobocz\w*/.test(text) || text.includes('poniedziałku do piątku') || text.includes('pn-pt')) {
     return { frequency: 'weekdays', endType: 'forever' };
   }
-  if (text.includes('weekend')) {
+
+  // Weekends
+  if (/\bweekend\w*/.test(text)) {
     return { frequency: 'weekends', endType: 'forever' };
   }
-  if (text.includes('codzien') || text.includes('woda') || text.includes('siano') || text.includes('witamina c') || text.includes('rano') || text.includes('wieczór') || text.includes('kuwet')) {
+
+  // Daily
+  if (
+    /\bcodzien\w*/.test(text) ||
+    /\bświeża woda\b/.test(text) ||
+    /\bsiano\b/.test(text) ||
+    /\bwitamina c\b/.test(text) ||
+    /\bkuwet\w*/.test(text)
+  ) {
     return { frequency: 'daily', endType: 'forever' };
   }
 

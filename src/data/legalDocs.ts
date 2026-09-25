@@ -19,7 +19,7 @@ export const APP_LEGAL: LegalDocumentConfig = {
   email: 'kjureczek@proton.me',
   github: 'github.com/krzjur-oss',
   licenseName: 'Wolna Licencja Użytku Prywatnego (Zastrzeżona) — WLUP',
-  appUrl: typeof window !== 'undefined' ? window.location.origin : 'https://ais-pre-oop667jjyzp5h4vgx2ldbf-176196111507.europe-west3.run.app'
+  appUrl: typeof window !== 'undefined' ? window.location.origin : ''
 };
 
 export const PERMISSIONS_EXPLANATION = {

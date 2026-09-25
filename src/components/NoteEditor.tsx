@@ -245,9 +245,11 @@ export default function NoteEditor({
         height: !isNaN(heightVal) ? heightVal : undefined,
       } : undefined;
 
+      let calculatedWeightKg: number | undefined = undefined;
       if ((category === 'pomiary' || category === 'weterynarz') && weightInput.trim()) {
         const weightVal = parseFloat(weightInput.replace(',', '.'));
         if (!isNaN(weightVal)) {
+          calculatedWeightKg = weightUnit === 'g' ? Number((weightVal / 1000).toFixed(4)) : weightVal;
           const weightLine = `Waga: ${weightVal} ${weightUnit}`;
           const weightRegex = /waga:?\s*(?:\d+(?:[.,]\d+)?)\s*(?:kg|g|kilogram[a-z]*|gram[a-z]*)?/i;
           if (weightRegex.test(finalContent)) {
@@ -304,6 +306,7 @@ export default function NoteEditor({
         photo,
         drawing: showDrawingBoard ? drawing : undefined, // respect canvas closure
         dimensions: dimensionsObj,
+        weightKg: calculatedWeightKg,
         createdAt: editingEntry?.createdAt || Date.now(),
       };
 

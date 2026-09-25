@@ -1,11 +1,8 @@
 {
-  "name": "Dziennik Pupila",
-  "description": "Offline-first PWA for pet owners to keep a journal of their pets with photo uploads and handwritten stylus notes.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ],
-  "majorCapabilities": [
+  "name": "Dziennik Pupila - Pamiętnik Offline",
+  "description": "Kompleksowa, bezpieczna i nowoczesna aplikacja PWA do prowadzenia pamiętnika, monitorowania wagi i zdrowia zwierząt domowych offline.",
+  "permissions": [],
+  "capabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]
 }

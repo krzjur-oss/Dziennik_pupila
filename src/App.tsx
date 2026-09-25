@@ -8,8 +8,14 @@ import {
   getEntriesByPet,
   saveEntry,
   deleteEntry,
+  getHealthEvents,
+  saveHealthEvent,
+  saveHealthEventsBatch,
+  deleteHealthEvent as deleteHealthEventDB,
+  deleteHealthEventsByGroup,
   exportDatabase,
   importDatabase,
+  ImportResult,
 } from './lib/db';
 import { getSpeciesEmoji, calculateAgeInPolish, getSpeciesLabel } from './utils';
 import PetManager from './components/PetManager';
@@ -19,6 +25,7 @@ import PhotoGallery from './components/PhotoGallery';
 import WeightChart from './components/WeightChart';
 import HealthCalendar from './components/HealthCalendar';
 import LegalModal from './components/LegalModal';
+import ImportConfirmModal from './components/ImportConfirmModal';
 import { requestAllPermissions } from './utils/permissionUtils';
 import {
   Heart,
@@ -71,28 +78,25 @@ export default function App() {
 
   // Backup state
   const [showSettings, setShowSettings] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isRequestingPermsInSettings, setIsRequestingPermsInSettings] = useState(false);
   const [settingsPermNotice, setSettingsPermNotice] = useState<string | null>(null);
 
-  // Load health events on mount
+  // Load health events on mount from IndexedDB
   useEffect(() => {
-    const cachedEvents = localStorage.getItem('DziennikPupila_healthEvents');
-    if (cachedEvents) {
+    async function loadEvents() {
       try {
-        setHealthEvents(JSON.parse(cachedEvents));
+        const events = await getHealthEvents();
+        setHealthEvents(events);
       } catch (e) {
-        console.error('Error loading health events:', e);
+        console.error('Error loading health events from DB:', e);
       }
     }
+    loadEvents();
   }, []);
 
-  const saveHealthEventsToStorage = (events: HealthEvent[]) => {
-    setHealthEvents(events);
-    localStorage.setItem('DziennikPupila_healthEvents', JSON.stringify(events));
-  };
-
-  const handleAddHealthEvents = (
+  const handleAddHealthEvents = async (
     eventsData: Array<Omit<HealthEvent, 'id' | 'petId' | 'createdAt' | 'isCompleted'>>
   ) => {
     if (!activePetId || eventsData.length === 0) return;
@@ -104,8 +108,9 @@ export default function App() {
       isCompleted: false,
       createdAt: now + idx,
     }));
-    const updated = [...healthEvents, ...newEvents];
-    saveHealthEventsToStorage(updated);
+    await saveHealthEventsBatch(newEvents);
+    const updated = await getHealthEvents();
+    setHealthEvents(updated);
     if (newEvents.length > 1) {
       triggerSuccessAlert(`Zaplanowano ${newEvents.length} powtórzeń zadania: ${newEvents[0].title}!`);
     } else {
@@ -113,36 +118,37 @@ export default function App() {
     }
   };
 
-  const handleAddHealthEvent = (eventData: Omit<HealthEvent, 'id' | 'petId' | 'createdAt' | 'isCompleted'>) => {
-    handleAddHealthEvents([eventData]);
+  const handleAddHealthEvent = async (eventData: Omit<HealthEvent, 'id' | 'petId' | 'createdAt' | 'isCompleted'>) => {
+    await handleAddHealthEvents([eventData]);
   };
 
-  const handleToggleHealthEventComplete = (id: string) => {
-    const updated = healthEvents.map(e => e.id === id ? { ...e, isCompleted: !e.isCompleted } : e);
-    saveHealthEventsToStorage(updated);
-    const found = updated.find(e => e.id === id);
-    if (found) {
-      if (found.isCompleted) {
-        triggerSuccessAlert(`Wykonano wydarzenie: ${found.title}!`);
-      } else {
-        triggerSuccessAlert(`Oznaczono jako nadchodzące: ${found.title}`);
-      }
+  const handleToggleHealthEventComplete = async (id: string) => {
+    const target = healthEvents.find(e => e.id === id);
+    if (!target) return;
+    const updatedEvent: HealthEvent = { ...target, isCompleted: !target.isCompleted };
+    await saveHealthEvent(updatedEvent);
+    const updatedList = await getHealthEvents();
+    setHealthEvents(updatedList);
+    if (updatedEvent.isCompleted) {
+      triggerSuccessAlert(`Wykonano wydarzenie: ${target.title}!`);
+    } else {
+      triggerSuccessAlert(`Oznaczono jako nadchodzące: ${target.title}`);
     }
   };
 
-  const handleDeleteHealthEvent = (id: string, deleteSeries = false) => {
+  const handleDeleteHealthEvent = async (id: string, deleteSeries = false) => {
     const targetEvent = healthEvents.find(e => e.id === id);
-    let updated: HealthEvent[];
+    if (!targetEvent) return;
 
-    if (deleteSeries && targetEvent?.recurrenceGroupId) {
-      const groupId = targetEvent.recurrenceGroupId;
-      const count = healthEvents.filter(e => e.recurrenceGroupId === groupId).length;
-      updated = healthEvents.filter(e => e.recurrenceGroupId !== groupId);
-      saveHealthEventsToStorage(updated);
+    if (deleteSeries && targetEvent.recurrenceGroupId) {
+      const count = await deleteHealthEventsByGroup(targetEvent.recurrenceGroupId);
+      const updatedList = await getHealthEvents();
+      setHealthEvents(updatedList);
       triggerSuccessAlert(`Usunięto całą serię powtórzeń (${count} zadań).`);
     } else {
-      updated = healthEvents.filter(e => e.id !== id);
-      saveHealthEventsToStorage(updated);
+      await deleteHealthEventDB(id);
+      const updatedList = await getHealthEvents();
+      setHealthEvents(updatedList);
       triggerSuccessAlert('Usunięto zadanie z terminarza.');
     }
   };
@@ -256,14 +262,7 @@ export default function App() {
   const handleExportBackup = async () => {
     try {
       const jsonString = await exportDatabase();
-      const backupObj = JSON.parse(jsonString);
-      
-      // Inject healthEvents
-      const cachedEvents = localStorage.getItem('DziennikPupila_healthEvents') || '[]';
-      backupObj.healthEvents = JSON.parse(cachedEvents);
-
-      const mergedJson = JSON.stringify(backupObj, null, 2);
-      const blob = new Blob([mergedJson], { type: 'application/json' });
+      const blob = new Blob([jsonString], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -272,51 +271,44 @@ export default function App() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      triggerSuccessAlert('Wyeksportowano kopię zapasową bazy danych!');
+      triggerSuccessAlert('Wyeksportowano pełną kopię zapasową bazy danych!');
     } catch (err) {
       console.error('Błąd eksportu kopii zapasowej:', err);
-      alert('Nie udało się wyeksportować danych.');
+      triggerSuccessAlert('Nie udało się wyeksportować danych.');
     }
   };
 
-  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const json = event.target?.result as string;
-        const backupObj = JSON.parse(json);
-        
-        await importDatabase(json);
-
-        // Restore healthEvents
-        if (backupObj.healthEvents && Array.isArray(backupObj.healthEvents)) {
-          localStorage.setItem('DziennikPupila_healthEvents', JSON.stringify(backupObj.healthEvents));
-          setHealthEvents(backupObj.healthEvents);
+  const handleImportSuccess = async (result: ImportResult) => {
+    try {
+      // Reload all from IndexedDB
+      const loadedPets = await getPets();
+      setPets(loadedPets);
+      if (loadedPets.length > 0) {
+        const cachedPetId = localStorage.getItem('DziennikPupila_activePetId');
+        if (cachedPetId && loadedPets.some(p => p.id === cachedPetId)) {
+          setActivePetId(cachedPetId);
         } else {
-          localStorage.removeItem('DziennikPupila_healthEvents');
-          setHealthEvents([]);
-        }
-        
-        // Reload all
-        const loadedPets = await getPets();
-        setPets(loadedPets);
-        if (loadedPets.length > 0) {
           setActivePetId(loadedPets[0].id);
           localStorage.setItem('DziennikPupila_activePetId', loadedPets[0].id);
-        } else {
-          setActivePetId(undefined);
         }
-        setShowSettings(false);
-        triggerSuccessAlert('Kopia zapasowa przywrócona pomyślnie!');
-      } catch (err) {
-        console.error('Błąd importu danych:', err);
-        alert('Błąd podczas przywracania danych. Upewnij się, że załączasz poprawny plik JSON kopii.');
+      } else {
+        setActivePetId(undefined);
       }
-    };
-    reader.readAsText(file);
+
+      const loadedEvents = await getHealthEvents();
+      setHealthEvents(loadedEvents);
+
+      if (activePetId) {
+        const loadedEntries = await getEntriesByPet(activePetId);
+        setEntries(loadedEntries);
+      }
+
+      setShowSettings(false);
+      triggerSuccessAlert(result.message || 'Kopia zapasowa przywrócona pomyślnie!');
+    } catch (e) {
+      console.error('Błąd po imporcie bazy:', e);
+      triggerSuccessAlert('Zaimportowano dane, odśwież widok.');
+    }
   };
 
   const activePet = pets.find((p) => p.id === activePetId);
@@ -422,17 +414,15 @@ export default function App() {
                 Pobierz kopię zapasową (.json)
               </button>
 
-              {/* Import backup simulation */}
-              <label className="cursor-pointer px-4 py-2 border border-natural-border bg-natural-highlight hover:bg-natural-border text-natural-primary font-semibold text-xs rounded-xl shadow-xs transition inline-flex items-center gap-1.5">
+              {/* Import backup button */}
+              <button
+                type="button"
+                onClick={() => setShowImportModal(true)}
+                className="cursor-pointer px-4 py-2 border border-natural-border bg-natural-highlight hover:bg-natural-border text-natural-primary font-semibold text-xs rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+              >
                 <Upload size={13} />
                 Przywróć dane z pliku kopii
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleImportBackup}
-                  className="hidden"
-                />
-              </label>
+              </button>
 
             </div>
 
