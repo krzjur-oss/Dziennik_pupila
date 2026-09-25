@@ -304,6 +304,10 @@ export default function HealthCalendar({
     }
 
     if (isRecurring && frequency !== 'none' && currentRecurrenceRule) {
+      if (currentRecurrenceRule.endType === 'count' && (currentRecurrenceRule.endCount ?? 0) > 366) {
+        setFormError('Liczba powtórzeń nie może przekraczać 366.');
+        return;
+      }
       if (currentRecurrenceRule.frequency === 'weekly' && (!selectedDays || selectedDays.length === 0)) {
         setFormError('Wybierz przynajmniej jeden dzień tygodnia dla cyklu tygodniowego.');
         return;
@@ -943,7 +947,7 @@ export default function HealthCalendar({
                         className="text-indigo-600 focus:ring-indigo-500"
                       />
                       <span className="text-[11px] font-medium text-natural-dark">
-                        Bezterminowo (planuj na najbliższy miesiąc / rok w przód)
+                        Bezterminowo (kalendarz uzupełnia się automatycznie)
                       </span>
                     </label>
 
@@ -967,7 +971,7 @@ export default function HealthCalendar({
                           <input
                             type="number"
                             min={1}
-                            max={90}
+                            max={366}
                             value={endCount}
                             onChange={(e) => setEndCount(Math.max(1, parseInt(e.target.value, 10) || 1))}
                             className="w-14 px-2 py-0.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-bold text-center"

@@ -3,23 +3,18 @@ import {
   Shield,
   FileText,
   Scale,
+  Lock,
+  X,
+  User,
+  AlertCircle,
+  Sparkles,
   Camera,
   Mic,
   Bell,
-  HardDrive,
-  Lock,
-  Check,
-  X,
-  ExternalLink,
-  User,
-  Heart,
-  AlertCircle,
-  Sparkles,
-  CheckCircle2,
-  RefreshCw
+  HardDrive
 } from 'lucide-react';
 import { APP_LEGAL, PERMISSIONS_EXPLANATION, TERMS_AND_CONDITIONS, SOFTWARE_LICENSE } from '../data/legalDocs';
-import { checkPermissionsStatus, requestAllPermissions, PermissionStatusSummary } from '../utils/permissionUtils';
+import { checkPermissionsStatus, PermissionStatusSummary } from '../utils/permissionUtils';
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -38,10 +33,6 @@ export default function LegalModal({
   const [agreeNonCommercial, setAgreeNonCommercial] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  
-  // Permission grant state
-  const [isRequestingPermissions, setIsRequestingPermissions] = useState(false);
-  const [permissionSuccessNotice, setPermissionSuccessNotice] = useState<string | null>(null);
   const [permStatus, setPermStatus] = useState<PermissionStatusSummary | null>(null);
 
   useEffect(() => {
@@ -50,22 +41,18 @@ export default function LegalModal({
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isFirstRun && onClose) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isFirstRun, onClose]);
 
-  const handleGrantPermissions = async () => {
-    setIsRequestingPermissions(true);
-    setPermissionSuccessNotice(null);
-    try {
-      const result = await requestAllPermissions();
-      const updated = await checkPermissionsStatus();
-      setPermStatus(updated);
-      setPermissionSuccessNotice(result.message);
-    } catch (e) {
-      setPermissionSuccessNotice('Wystąpił problem przy wywołaniu zapytania o uprawnienia.');
-    } finally {
-      setIsRequestingPermissions(false);
-    }
-  };
+  if (!isOpen) return null;
 
   const handleConfirm = () => {
     if (!agreeNonCommercial || !agreeTerms) {
@@ -80,14 +67,21 @@ export default function LegalModal({
 
   return (
     <div className="fixed inset-0 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in duration-300">
-      <div className="bg-natural-sand rounded-3xl w-full max-w-2xl border border-natural-border shadow-2xl p-4 sm:p-6 flex flex-col space-y-4 animate-in zoom-in-95 duration-300 max-h-[94vh] overflow-hidden">
-        
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="legal-modal-title"
+        className="bg-natural-sand rounded-3xl w-full max-w-2xl border border-natural-border shadow-2xl p-4 sm:p-6 flex flex-col space-y-4 animate-in zoom-in-95 duration-300 max-h-[94vh] overflow-hidden"
+      >
         {/* Header */}
         <div className="flex items-start justify-between border-b border-natural-border/70 pb-3 shrink-0">
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl sm:text-3xl">🐾</span>
+            <span className="text-2xl sm:text-3xl" aria-hidden="true">🐾</span>
             <div>
-              <h2 className="text-base sm:text-lg font-serif font-extrabold text-natural-dark tracking-tight leading-tight">
+              <h2
+                id="legal-modal-title"
+                className="text-base sm:text-lg font-serif font-extrabold text-natural-dark tracking-tight leading-tight"
+              >
                 {APP_LEGAL.appName} • Regulamin & Licencja
               </h2>
               <p className="text-[10px] sm:text-[11px] text-natural-primary/75 font-semibold">
@@ -102,6 +96,7 @@ export default function LegalModal({
               onClick={onClose}
               className="p-1.5 rounded-xl hover:bg-natural-highlight text-natural-primary hover:text-natural-dark transition cursor-pointer"
               title="Zamknij"
+              aria-label="Zamknij okno regulaminu"
             >
               <X size={18} />
             </button>
@@ -120,7 +115,7 @@ export default function LegalModal({
             }`}
           >
             <Shield size={13} className={activeTab === 'permissions' ? 'text-amber-600' : 'opacity-60'} />
-            <span>Uprawnienia urządzenia</span>
+            <span>Moduły i prywatność</span>
           </button>
 
           <button
@@ -166,57 +161,11 @@ export default function LegalModal({
         {/* Scrollable Tab Content */}
         <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 bg-white/70 border border-natural-border/60 rounded-2xl p-4 shadow-2xs text-xs text-natural-primary/90">
           
-          {/* TAB 1: PERMISSIONS */}
+          {/* TAB 1: PERMISSIONS & PRIVACY */}
           {activeTab === 'permissions' && (
             <div className="space-y-3.5 animate-in fade-in duration-200">
               
-              {/* Sekcja aktywnego nadawania uprawnień jednym kliknięciem */}
-              <div className="bg-linear-to-r from-emerald-50 via-teal-50 to-amber-50 border border-emerald-200/90 rounded-2xl p-3.5 space-y-2.5 shadow-2xs">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 bg-emerald-600 text-white rounded-lg shadow-2xs">
-                      <Sparkles size={14} />
-                    </span>
-                    <div>
-                      <h4 className="font-serif font-extrabold text-xs sm:text-sm text-emerald-950">
-                        Automatyczne nadanie uprawnień
-                      </h4>
-                      <p className="text-[10px] text-emerald-800">
-                        Kliknij poniższy przycisk, aby przeglądarka wyświetliła zapytania i odblokowała moduły programu.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleGrantPermissions}
-                    disabled={isRequestingPermissions}
-                    className="flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
-                  >
-                    {isRequestingPermissions ? (
-                      <>
-                        <RefreshCw size={14} className="animate-spin" />
-                        <span>Oczekiwanie na decyzję w oknie przeglądarki...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Shield size={14} />
-                        <span>Nadaj potrzebne uprawnienia (Aparat, Mikrofon, Powiadomienia)</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {permissionSuccessNotice && (
-                  <div className="p-2.5 bg-white/90 border border-emerald-300 rounded-xl text-[10px] font-semibold text-emerald-900 flex items-center gap-1.5 animate-in fade-in">
-                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
-                    <span>{permissionSuccessNotice}</span>
-                  </div>
-                )}
-              </div>
-
+              {/* Privacy statement banner */}
               <div className="bg-amber-50/90 border border-amber-200/90 rounded-2xl p-3.5 space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="font-serif font-bold text-natural-dark text-xs sm:text-sm flex items-center gap-1.5 text-amber-950">
@@ -232,32 +181,44 @@ export default function LegalModal({
                 </p>
               </div>
 
+              {/* Grid of hardware and storage modules */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {PERMISSIONS_EXPLANATION.items.map((item) => (
-                  <div key={item.id} className="bg-white p-3 rounded-xl border border-natural-border/80 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between">
-                      <p className="font-extrabold text-natural-dark text-[11px] flex items-center gap-1.5">
-                        <span className="text-sm">{item.icon}</span>
-                        <span>{item.name}</span>
+                {PERMISSIONS_EXPLANATION.items.map((item) => {
+                  let statusText = item.badge;
+                  if (item.id === 'camera' && permStatus) {
+                    statusText = permStatus.camera === 'granted' ? 'Aktywne' : permStatus.camera === 'denied' ? 'Zablokowane' : 'Na żądanie';
+                  } else if (item.id === 'microphone' && permStatus) {
+                    statusText = permStatus.microphone === 'granted' ? 'Aktywne' : permStatus.microphone === 'denied' ? 'Zablokowane' : 'Na żądanie';
+                  } else if (item.id === 'notifications' && permStatus) {
+                    statusText = permStatus.notifications === 'granted' ? 'Włączone' : permStatus.notifications === 'denied' ? 'Zablokowane' : 'Opcjonalne';
+                  }
+
+                  return (
+                    <div key={item.id} className="bg-white p-3 rounded-xl border border-natural-border/80 shadow-2xs space-y-1">
+                      <div className="flex items-center justify-between">
+                        <p className="font-extrabold text-natural-dark text-[11px] flex items-center gap-1.5">
+                          <span className="text-sm">{item.icon}</span>
+                          <span>{item.name}</span>
+                        </p>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-natural-highlight text-natural-dark border border-natural-border/50">
+                          {statusText}
+                        </span>
+                      </div>
+                      <p className="text-[11px] font-semibold text-natural-dark/90 leading-tight pt-0.5">
+                        {item.purpose}
                       </p>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-natural-highlight text-natural-dark border border-natural-border/50">
-                        {item.badge}
-                      </span>
+                      <p className="text-[10px] text-natural-primary/75 leading-relaxed">
+                        {item.details}
+                      </p>
                     </div>
-                    <p className="text-[11px] font-semibold text-natural-dark/90 leading-tight pt-0.5">
-                      {item.purpose}
-                    </p>
-                    <p className="text-[10px] text-natural-primary/75 leading-relaxed">
-                      {item.details}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="p-3 bg-natural-highlight/60 rounded-xl border border-natural-border/70 flex items-center gap-2 text-[10px] text-natural-dark font-medium">
                 <Lock size={14} className="text-emerald-700 shrink-0" />
                 <span>
-                  Żadne zdjęcia, notatki ani nagrania mowy <strong>nigdy nie opuszczają Twojego urządzenia</strong>. Aplikacja nie łączy się z serwerami chmurowymi.
+                  Dane dziennika są zapisane wyłącznie na Twoim urządzeniu; sama aplikacja (jej pliki) jest pobierana z hostingu jak każda strona WWW.
                 </span>
               </div>
 
@@ -318,146 +279,91 @@ export default function LegalModal({
                     <h4 className="font-serif font-extrabold text-natural-dark text-sm">
                       {APP_LEGAL.author}
                     </h4>
-                    <p className="text-[10px] text-emerald-800 font-semibold">
-                      Twórca, autor i wyłączny dysponent praw autorskich
+                    <p className="text-[10px] text-natural-primary/75">
+                      Autor i twórca projektu „Dziennik Pupila”
                     </p>
                   </div>
                 </div>
-                <p className="text-[11px] text-natural-dark leading-relaxed pt-1">
-                  Program „{APP_LEGAL.appName}” został stworzony jako bezpłatne, bezpieczne narzędzie do wyłącznego użytku prywatnego dla opiekunów zwierząt domowych.
+                <p className="text-xs text-natural-primary leading-relaxed pt-1">
+                  Aplikacja została zaprojektowana z miłości do zwierząt i szacunku do prywatności opiekunów, 
+                  jako bezpłatne narzędzie offline chroniące dane przed komercyjnym profilowaniem.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <div className="p-3 bg-white rounded-xl border border-natural-border/70 space-y-1">
-                  <span className="text-[10px] font-bold text-natural-primary uppercase">Kontakt bezpośredni:</span>
-                  <p className="font-mono text-[11px] text-natural-dark font-bold">
+              <div className="bg-white p-3.5 rounded-xl border border-natural-border space-y-1.5 text-xs text-natural-dark">
+                <div className="flex justify-between items-center py-1 border-b border-natural-border/50">
+                  <span className="text-natural-primary/70">Kontakt e-mail:</span>
+                  <a href={`mailto:${APP_LEGAL.email}`} className="font-bold text-natural-secondary hover:underline">
                     {APP_LEGAL.email}
-                  </p>
-                  <p className="text-[9px] text-natural-primary/70">W sprawach zapytań licencyjnych i uwag</p>
-                </div>
-
-                <div className="p-3 bg-white rounded-xl border border-natural-border/70 space-y-1">
-                  <span className="text-[10px] font-bold text-natural-primary uppercase">Profil GitHub:</span>
-                  <a
-                    href={`https://${APP_LEGAL.github}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-mono text-[11px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-1"
-                  >
-                    <span>{APP_LEGAL.github}</span>
-                    <ExternalLink size={11} />
                   </a>
-                  <p className="text-[9px] text-natural-primary/70">Otwarte projekty i repozytoria autora</p>
                 </div>
-              </div>
-
-              <div className="p-3 bg-natural-highlight/50 rounded-xl border border-natural-border/60 text-[10px] text-natural-dark flex items-center gap-2">
-                <Heart size={14} className="text-red-500 shrink-0" />
-                <span>
-                  Dziękujemy za korzystanie z aplikacji i dbałość o zdrowie oraz szczęście Waszych czworonożnych, skrzydlatych i łuskowatych przyjaciół!
-                </span>
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-natural-primary/70">Profil GitHub:</span>
+                  <a href={`https://${APP_LEGAL.github}`} target="_blank" rel="noopener noreferrer" className="font-bold text-natural-secondary hover:underline">
+                    {APP_LEGAL.github}
+                  </a>
+                </div>
               </div>
             </div>
           )}
-
         </div>
 
-        {/* First Run Checkboxes & Validation */}
-        {isFirstRun && (
-          <div className="space-y-2.5 pt-1 shrink-0 border-t border-natural-border/70">
+        {/* Footer / First run acceptance checkboxes */}
+        {isFirstRun ? (
+          <div className="border-t border-natural-border/80 pt-3 space-y-3 shrink-0">
             {errorMessage && (
-              <p className="text-[10px] font-bold text-red-600 bg-red-50 p-2 rounded-xl border border-red-200 flex items-center gap-1.5 animate-shake">
-                <AlertCircle size={13} className="shrink-0" />
+              <div className="p-2.5 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-xs font-semibold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle size={14} className="shrink-0" />
                 <span>{errorMessage}</span>
-              </p>
+              </div>
             )}
 
-            {/* Szybki przycisk nadania uprawnień również bezpośrednio w stopce przed zatwierdzeniem */}
-            <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-2.5 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-950">
-                <Shield size={14} className="text-emerald-700 shrink-0" />
-                <span>Nadaj uprawnienia (Aparat, Mikrofon, Alert):</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleGrantPermissions}
-                disabled={isRequestingPermissions}
-                className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0 disabled:opacity-50"
-              >
-                {isRequestingPermissions ? (
-                  <>
-                    <RefreshCw size={12} className="animate-spin" />
-                    <span>Zezwól w oknie...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles size={12} />
-                    <span>Kliknij, aby nadać uprawnienia</span>
-                  </>
-                )}
-              </button>
+            <div className="space-y-2 bg-natural-highlight/60 p-3 rounded-2xl border border-natural-border/70 text-xs">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreeNonCommercial}
+                  onChange={(e) => setAgreeNonCommercial(e.target.checked)}
+                  className="mt-0.5 rounded border-natural-border text-natural-secondary focus:ring-natural-sage cursor-pointer"
+                />
+                <span className="text-natural-dark font-medium leading-tight">
+                  Oświadczam, że będę korzystać z programu <strong>wyłącznie w celach prywatnych i osobistych</strong> (opieka nad własnymi zwierzętami), zgodnie z Wolną Licencją Użytku Prywatnego (WLUP).
+                </span>
+              </label>
+
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="mt-0.5 rounded border-natural-border text-natural-secondary focus:ring-natural-sage cursor-pointer"
+                />
+                <span className="text-natural-dark font-medium leading-tight">
+                  Zapoznałem(-am) się z <strong>Regulaminem, Polityką Prywatności oraz Licencją WLUP</strong> i akceptuję ich warunki w całości.
+                </span>
+              </label>
             </div>
 
-            <label className="flex items-start gap-2.5 cursor-pointer select-none text-[11px] font-semibold text-natural-dark">
-              <input
-                type="checkbox"
-                checked={agreeNonCommercial}
-                onChange={(e) => {
-                  setAgreeNonCommercial(e.target.checked);
-                  if (errorMessage) setErrorMessage('');
-                }}
-                className="rounded border-natural-border text-natural-secondary focus:ring-natural-secondary mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
-              />
-              <span className="leading-snug">
-                Oświadczam, że będę używać aplikacji wyłącznie do osobistego użytku prywatnego, z poszanowaniem praw autorskich mgr. Krzysztofa Jureczka.
-              </span>
-            </label>
-
-            <label className="flex items-start gap-2.5 cursor-pointer select-none text-[11px] font-semibold text-natural-dark">
-              <input
-                type="checkbox"
-                checked={agreeTerms}
-                onChange={(e) => {
-                  setAgreeTerms(e.target.checked);
-                  if (errorMessage) setErrorMessage('');
-                }}
-                className="rounded border-natural-border text-natural-secondary focus:ring-natural-secondary mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
-              />
-              <span className="leading-snug">
-                Zapoznałem(-am) się i akceptuję Regulamin, Politykę Prywatności oraz warunki Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP.
-              </span>
-            </label>
-
-            <div className="pt-2 flex flex-col space-y-1.5">
-              <button
-                type="button"
-                onClick={handleConfirm}
-                className="w-full py-2.5 sm:py-3 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:shadow transition text-center cursor-pointer flex items-center justify-center gap-2"
-              >
-                <Check size={16} />
-                <span>Akceptuję warunki i przechodzę do programu 🐾</span>
-              </button>
-              <p className="text-[10px] text-center text-natural-primary/60 font-medium">
-                Wszystkie dane pozostają wyłącznie w Twoim urządzeniu. Prywatność i bezpieczeństwo w 100% Offline-First.
-              </p>
-            </div>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="w-full py-3 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <Sparkles size={14} />
+              <span>Akceptuję warunki i przechodzę do Dziennika Pupila</span>
+            </button>
           </div>
-        )}
-
-        {/* Normal View Modal Close Button */}
-        {!isFirstRun && onClose && (
-          <div className="pt-2 shrink-0 border-t border-natural-border/70 flex justify-end">
+        ) : (
+          <div className="border-t border-natural-border/80 pt-2 flex justify-end shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs font-bold transition cursor-pointer"
+              className="px-5 py-2 bg-natural-secondary hover:bg-natural-olive text-white rounded-xl text-xs font-bold shadow-2xs hover:shadow transition cursor-pointer"
             >
               Zamknij
             </button>
           </div>
         )}
-
       </div>
     </div>
   );

@@ -106,9 +106,10 @@ export default function PhotoGallery({
   }, [galleryItems, filterType, searchQuery, selectedCategory]);
 
   const handleDownload = (src: string, title: string, type: string) => {
+    const ext = type === 'photo' ? 'jpg' : 'png';
     const link = document.createElement('a');
     link.href = src;
-    link.download = `${type}-${title.toLowerCase().replace(/\s+/g, '_')}-${Date.now()}.png`;
+    link.download = `${type}-${title.toLowerCase().replace(/\s+/g, '_')}-${Date.now()}.${ext}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

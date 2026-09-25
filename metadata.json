@@ -1,8 +1,0 @@
-{
-  "name": "Dziennik Pupila - Pamiętnik Offline",
-  "description": "Kompleksowa, bezpieczna i nowoczesna aplikacja PWA do prowadzenia pamiętnika, monitorowania wagi i zdrowia zwierząt domowych offline.",
-  "permissions": [],
-  "capabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}

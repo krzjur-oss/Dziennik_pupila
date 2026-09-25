@@ -12,7 +12,7 @@ export interface LegalDocumentConfig {
 
 export const APP_LEGAL: LegalDocumentConfig = {
   appName: 'Dziennik Pupila',
-  version: '1.2.0',
+  version: '1.2.1',
   effectiveDate: 'wrzesień 2026 r.',
   year: '2026',
   author: 'mgr Krzysztof Jureczek',
@@ -23,10 +23,10 @@ export const APP_LEGAL: LegalDocumentConfig = {
 };
 
 export const PERMISSIONS_EXPLANATION = {
-  title: 'Dlaczego program prosi o dostęp do Aparatu i Mikrofonu?',
-  subtitle: 'Wyjaśnienie celów uprawnień przy pierwszym uruchomieniu aplikacji',
+  title: 'Dlaczego program korzysta z modułów Aparatu i Mikrofonu?',
+  subtitle: 'Wyjaśnienie celów działania modułów przy korzystaniu z aplikacji',
   badge: '100% Prywatności i Offline-First',
-  intro: 'Przy uruchomieniu przeglądarka wyświetla zapytanie o dostęp do aparatu (camera) oraz mikrofonu (microphone). Aplikacja została stworzona zgodnie z filozofią Offline-First i wykorzystuje te moduły wyłącznie lokalnie na Twoim urządzeniu w celach prywatnych:',
+  intro: 'Aplikacja została zaprojektowana w architekturze Offline-First. Dane dziennika są zapisane wyłącznie na Twoim urządzeniu; sama aplikacja (jej pliki) jest pobierana z hostingu jak każda strona WWW. Moduły sprzętowe są wykorzystywane wyłącznie na Twoje wyraźne żądanie w celach prywatnej opieki nad pupilem:',
   items: [
     {
       id: 'camera',
@@ -40,21 +40,21 @@ export const PERMISSIONS_EXPLANATION = {
       id: 'microphone',
       name: 'Mikrofon (Web Speech API)',
       icon: '🎙️',
-      badge: 'Lokalne',
+      badge: 'Opcjonalne',
       purpose: 'Wygodne dyktowanie głosowe wpisów pamiętnika w języku polskim bez dotykania klawiatury.',
-      details: 'Niezwykle przydatne, gdy trzymasz zwierzę obiema rękami na stole zabiegowym lub podczas pielęgnacji. Mowa jest konwertowana na tekst w locie – dźwięk NIE jest nagrywany, zapisywany ani wysyłany na żadne serwery zewnętrzne.'
+      details: 'Mowa jest zamieniana na tekst przez wbudowany mechanizm przeglądarki. W niektórych przeglądarkach (np. Chrome) to przetwarzanie może odbywać się w chmurze dostawcy przeglądarki, a nie lokalnie na urządzeniu — to nie jest serwer aplikacji ani jej autora.'
     },
     {
       id: 'notifications',
-      name: 'Powiadomienia Push (Notification API)',
+      name: 'Przypomnienia lokalne (Notification API)',
       icon: '🔔',
       badge: 'Opcjonalne',
       purpose: 'Przypomnienia o lekach, szczepieniach, odrobaczaniu, ważeniu i obowiązkach z terminarza.',
-      details: 'Działa lokalnie w przeglądarce. Prośba o zgodę pojawia się dopiero po świadomym kliknięciu przycisku włączenia powiadomień w module terminarza.'
+      details: 'Aplikacja pokaże przypomnienie po jej otwarciu lub powrocie do niej — działa tylko wtedy, gdy przeglądarka jest uruchomiona. Prośba o zgodę pojawia się dopiero po włączeniu przypomnień w terminarzu.'
     },
     {
       id: 'storage',
-      name: 'Pamięć lokalna urządzenia (IndexedDB & localStorage)',
+      name: 'Pamięć lokalna urządzenia (IndexedDB Storage)',
       icon: '💾',
       badge: 'Baza danych',
       purpose: 'Trwałe i bezpieczne przechowywanie profili pupili, notatek, zdjęć, szkiców i historii wagi.',
@@ -67,7 +67,7 @@ export const PERMISSIONS_EXPLANATION = {
 export const TERMS_AND_CONDITIONS = `
 # Regulamin i Polityka Prywatności aplikacji „Dziennik Pupila”
 
-**Wersja 1.2.0 · obowiązuje od września 2026 r.**
+**Wersja 1.2.1 · obowiązuje od września 2026 r.**
 
 ---
 
@@ -75,7 +75,7 @@ export const TERMS_AND_CONDITIONS = `
 
 1. Niniejszy Regulamin określa zasady korzystania z aplikacji **„Dziennik Pupila”** (dalej: „Aplikacja”), dostępnej pod adresem internetowym wdrożenia oraz jako instalowana aplikacja PWA w pamięci urządzenia.
 2. Właścicielem, twórcą i jedynym autorem Aplikacji jest **mgr Krzysztof Jureczek** (dalej: „Autor”).
-3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP**. Regulamin i Licencja stanowią całość i obowiązują łącznie.
+3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP** (pełna treść w pliku LICENSE). Regulamin i Licencja stanowią całość i obowiązują łącznie.
 4. Korzystanie z Aplikacji oznacza pełną akceptację niniejszego Regulaminu oraz Licencji.
 
 ---
@@ -104,23 +104,25 @@ Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wi
 * ❌ **Zabronione:** Kopiowanie, modyfikowanie, dekompilowanie, rozpowszechnianie, sprzedaż lub komercjalizacja Aplikacji bądź jej części bez pisemnej zgody Autora.
 * ✅ **Dozwolone:** Korzystanie z Aplikacji zgodnie z jej przeznaczeniem wyłącznie prywatnym (§ 2), instalowanie na urządzeniach własnych oraz udostępnianie linku do Aplikacji innym osobom fizycznym do ich użytku prywatnego.
 
+Szczegółowe warunki licencyjne określa plik LICENSE.
+
 ---
 
 ## § 5. Dane i prywatność (RODO/GDPR)
 
 1. Aplikacja **nie wymaga rejestracji, zakładania konta ani logowania** i nie zbiera żadnych danych osobowych na zewnętrznych serwerach.
-2. Dane wprowadzane do Aplikacji (profile pupili, imiona, historia wpisów pamiętnika, pomiary wagi, odręczne szkice i rysunki medyczne, zdjęcia oraz zaplanowane zadania zdrowotne i terminarz) przechowywane są **wyłącznie lokalnie w pamięci urządzenia użytkownika** (\`IndexedDB\` oraz \`localStorage\`) i nigdy nie opuszczają jego urządzenia.
+2. Dane wprowadzane do Aplikacji (profile pupili, imiona, historia wpisów pamiętnika, pomiary wagi, odręczne szkice i rysunki medyczne, zdjęcia oraz zaplanowane zadania zdrowotne i terminarz) przechowywane są **wyłącznie lokalnie w pamięci urządzenia użytkownika** (\`IndexedDB\` oraz \`localStorage\`) i nigdy nie opuszczają jego urządzenia. Dane dziennika są zapisane wyłącznie na Twoim urządzeniu; sama aplikacja (jej pliki) jest pobierana z hostingu jak każda strona WWW.
 3. Administratorem danych wprowadzanych do programu jest wyłącznie Użytkownik końcowy (opiekun zwierzęcia) — Autor nie ma jakiegokolwiek dostępu do tych danych.
 4. Aplikacja nie używa profilujących plików cookie, narzędzi śledzących telemetrycznych ani komercyjnych sieci analitycznych.
 5. Użytkownik może w każdej chwili usunąć swoje dane, czyszcząc pamięć podręczną przeglądarki lub korzystając z funkcji eksportu kopii zapasowej w formacie JSON.
 
 ---
 
-## § 6. Wyjaśnienie uprawnień sprzętowych (Aparat, Mikrofon, Powiadomienia)
+## § 6. Wyjaśnienie modułów sprzętowych (Aparat, Mikrofon, Przypomnienia)
 
-1. **Aparat fotograficzny:** Służy wyłącznie do bezpośredniego uwieczniania zdjęć pupila, karmy, postępów leczenia oraz wyboru awatara.
-2. **Mikrofon:** Używany jest opcjonalnie do zamiany mowy na tekst (dyktowanie głosowe w języku polskim) w celu ułatwienia sporządzania prywatnych notatek w trakcie opieki. Aplikacja nie nagrywa głosu w tle i nie wysyła nagrań na serwery.
-3. **Powiadomienia:** Służą do wyświetlania lokalnych alertów o zaplanowanych lekach, badaniach i obowiązkach pielęgnacyjnych.
+1. **Aparat fotograficzny:** Służy wyłącznie do bezpośredniego uwieczniania zdjęć pupila, karmy, postępów leczenia oraz wyboru awatara na wyraźne żądanie użytkownika.
+2. **Mikrofon:** Używany jest opcjonalnie do zamiany mowy na tekst (dyktowanie głosowe w języku polskim) w celu ułatwienia sporządzania prywatnych notatek w trakcie opieki. Mowa jest zamieniana na tekst przez wbudowany mechanizm przeglądarki. W niektórych przeglądarkach (np. Chrome) to przetwarzanie może odbywać się w chmurze dostawcy przeglądarki, a nie lokalnie na urządzeniu — to nie jest serwer aplikacji ani jej autora.
+3. **Powiadomienia i przypomnienia:** Służą do wyświetlania lokalnych alertów o zaplanowanych lekach, badaniach i obowiązkach pielęgnacyjnych po otwarciu lub powrocie do aplikacji.
 
 ---
 
@@ -145,36 +147,27 @@ export const SOFTWARE_LICENSE = `
 # LICENCJA UŻYTKOWANIA OPROGRAMOWANIA
 ## Wolna Licencja Użytku Prywatnego (Zastrzeżona) — WLUP
 
-### Projekt: Dziennik Pupila (wersja 1.2.0 i wyższe)
+### Projekt: Dziennik Pupila (wersja 1.2.1 i wyższe)
 
 **Właściciel praw autorskich i twórca:**
-**mgr Krzysztof Jureczek**
-*Copyright © 2026 Krzysztof Jureczek. Wszelkie prawa zastrzeżone.*
-
-Kontakt: kjureczek@proton.me · GitHub: github.com/krzjur-oss
+mgr Krzysztof Jureczek (kontakt: kjureczek@proton.me, GitHub: github.com/krzjur-oss)
 
 ---
 
-### PREAMBUŁA
+### § 1. CHARAKTER I CEL LICENCJI
 
-Niniejsza licencja ma na celu zabezpieczenie niekomercyjnego charakteru projektu **„Dziennik Pupila”**. Intencją Autora jest bezpłatne udostępnienie aplikacji do wyłącznego użytku prywatnego (osobistego i rodzinnego), przy jednoczesnym pełnym zachowaniu praw autorskich, integralności kodu źródłowego oraz kategorycznym zakazie jakiejkolwiek komercjalizacji, odsprzedaży, kopiowania, modyfikacji w celach dystrybucyjnych i wykorzystania komercyjnego bez pisemnej zgody Autora.
-
----
-
-### § 1. DEFINICJE
-
-1. **Oprogramowanie** – aplikacja „Dziennik Pupila” wraz z całym kodem źródłowym, plikami wykonywalnymi, interfejsem graficznym, szablonami opieki, zasobami multimedialnymi oraz dokumentacją.
-2. **Autor / Licencjodawca** – mgr Krzysztof Jureczek, jedyny twórca i wyłączny dysponent autorskich praw majątkowych i osobistych do Oprogramowania.
-3. **Użytkownik / Licencjobiorca** – każda osoba fizyczna korzystająca z Oprogramowania wyłącznie w celach prywatnych, osobistych lub rodzinnych.
+Niniejsza Wolna Licencja Użytku Prywatnego (Zastrzeżona) („WLUP”) reguluje zasady nieodpłatnego korzystania z oprogramowania **Dziennik Pupila** („Oprogramowanie”). 
+Celem licencji jest udostępnienie osobom fizycznym bezpiecznego, pozbawionego reklam i trackerów narzędzia do opieki nad własnymi zwierzętami domowymi, przy jednoczesnym **bezwzględnym zastrzeżeniu zakazu jakiejkolwiek komercjalizacji, redystrybucji oraz czerpania korzyści majątkowych przez podmioty trzecie**.
 
 ---
 
 ### § 2. DOZWOLONY UŻYTEK (BEZPŁATNY)
 
-Autor udziela Użytkownikowi bezpłatnej, niewyłącznej, nieprzenoszalnej i ściśle ograniczonej licencji na korzystanie z Oprogramowania wyłącznie w następującym celu:
+Licencjodawca udziela Użytkownikowi niewyłącznej, nieprzenoszalnej, nieodpłatnej licencji na korzystanie z Oprogramowania z zastrzeżeniem następujących warunków:
 
-1. **Użytek prywatny / osobisty** – instalowanie i uruchamianie Oprogramowania przez osoby fizyczne na własny, prywatny, niekomercyjny użytek do prowadzenia pamiętnika, monitorowania zdrowia, pielęgnacji i wagi własnych zwierząt domowych.
-2. **Instalacja lokalna** – uruchamianie i przechowywanie Oprogramowania w trybie offline/PWA na urządzeniach własnych Użytkownika.
+1. **Wyłącznie użytek prywatny / osobisty** – Oprogramowanie może być używane wyłącznie przez osoby fizyczne do celów prywatnych, osobistych lub w kręgu domowym (np. monitorowanie wagi psa, terminy szczepień kota, pielęgnacja gryzonia).
+2. **Brak ograniczeń czasowych w użyciu prywatnym** – Użytkownik prywatny może korzystać z zainstalowanej wersji bez ograniczeń czasowych.
+3. **Instalacja lokalna** – Dozwolone jest instalowanie Oprogramowania jako Progressive Web App (PWA) na własnych urządzeniach osobistych (smartfon, tablet, komputer).
 
 ---
 

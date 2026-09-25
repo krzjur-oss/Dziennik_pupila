@@ -1,4 +1,4 @@
-import { RecurrenceFrequency, RecurrenceRule } from '../types';
+import { RecurrenceFrequency, RecurrenceRule, HealthEvent } from '../types';
 
 export const RECURRENCE_OPTIONS: Array<{
   value: RecurrenceFrequency;
@@ -55,51 +55,69 @@ export function parseYMDToDate(ymd: string): Date {
 
 /**
  * Generates an array of YYYY-MM-DD dates based on a recurrence rule.
- * Hard limit of 90 instances max to guarantee responsiveness and zero latency.
+ * Supports sliding window for 'forever' series (minimum 90 days ahead) and up to 366 instances.
  */
-export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRule): string[] {
+export function generateRecurrenceDates(
+  startDateStr: string,
+  rule: RecurrenceRule,
+  options?: { horizonDays?: number; targetDate?: string }
+): string[] {
   if (!rule || rule.frequency === 'none') {
     return [startDateStr];
   }
 
   const results: string[] = [];
   const start = parseYMDToDate(startDateStr);
-  const maxInstances = rule.endType === 'count' && rule.endCount ? Math.min(rule.endCount, 90) : 90;
   
-  const endLimitDate = rule.endType === 'until_date' && rule.endDate
-    ? parseYMDToDate(rule.endDate)
-    : null;
+  // Maximum allowed instances: up to 366
+  const maxInstances = rule.endType === 'count' && rule.endCount
+    ? Math.min(rule.endCount, 366)
+    : 366;
 
-  // Default occurrences if 'forever'
-  const foreverLimits: Record<RecurrenceFrequency, number> = {
+  let endLimitDate: Date | null = null;
+  if (rule.endType === 'until_date' && rule.endDate) {
+    endLimitDate = parseYMDToDate(rule.endDate);
+  } else if (options?.targetDate) {
+    endLimitDate = parseYMDToDate(options.targetDate);
+  } else if (rule.endType === 'forever') {
+    const horizonDays = Math.max(options?.horizonDays ?? 90, 90);
+    const horizon = new Date(start);
+    horizon.setDate(horizon.getDate() + horizonDays);
+    endLimitDate = horizon;
+  }
+
+  // Minimum occurrences guaranteed for 'forever' even if horizon is short
+  const minOccurrencesForForever: Record<RecurrenceFrequency, number> = {
     none: 1,
-    daily: 30, // 30 days ahead
-    weekdays: 25, // approx 5 weeks
-    weekends: 16, // 8 weekends
-    weekly: 16, // 16 weeks
-    biweekly: 12, // 24 weeks
-    every_3_weeks: 10, // 30 weeks
-    every_4_weeks: 8,
-    monthly: 12, // 1 year
-    every_2_months: 6, // 1 year
-    every_3_months: 6, // 1.5 year
-    every_6_months: 4, // 2 years
-    yearly: 3, // 3 years
-    custom_days: 20
+    daily: 90,
+    weekdays: 65,
+    weekends: 26,
+    weekly: 13,
+    biweekly: 7,
+    every_3_weeks: 5,
+    every_4_weeks: 4,
+    monthly: 4,
+    every_2_months: 2,
+    every_3_months: 2,
+    every_6_months: 2,
+    yearly: 2,
+    custom_days: 30
   };
 
   const targetCount = rule.endType === 'count'
     ? maxInstances
-    : rule.endType === 'until_date'
-    ? 90
-    : foreverLimits[rule.frequency] || 30;
+    : 366;
+
+  const minForeverCount = rule.endType === 'forever'
+    ? (minOccurrencesForForever[rule.frequency] || 1)
+    : 0;
 
   const current = new Date(start);
 
   switch (rule.frequency) {
     case 'daily': {
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(current));
         current.setDate(current.getDate() + 1);
       }
@@ -107,29 +125,25 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
     }
 
     case 'weekdays': {
-      // Monday (1) to Friday (5)
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         const dayOfWeek = current.getDay();
         if (dayOfWeek >= 1 && dayOfWeek <= 5) {
           results.push(formatDateToYMD(current));
         }
         current.setDate(current.getDate() + 1);
-        if (results.length >= 90) break;
       }
       break;
     }
 
     case 'weekends': {
-      // Saturday (6) and Sunday (0)
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         const dayOfWeek = current.getDay();
         if (dayOfWeek === 0 || dayOfWeek === 6) {
           results.push(formatDateToYMD(current));
         }
         current.setDate(current.getDate() + 1);
-        if (results.length >= 90) break;
       }
       break;
     }
@@ -140,22 +154,21 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
         : [start.getDay()];
 
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         const dayOfWeek = current.getDay();
         if (selectedDays.includes(dayOfWeek)) {
           results.push(formatDateToYMD(current));
         }
         current.setDate(current.getDate() + 1);
-        // Safety bound: up to 365 days checked
         const diffDays = Math.round((current.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-        if (diffDays > 365) break;
+        if (diffDays > 730) break;
       }
       break;
     }
 
     case 'biweekly': {
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(current));
         current.setDate(current.getDate() + 14);
       }
@@ -164,7 +177,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
 
     case 'every_3_weeks': {
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(current));
         current.setDate(current.getDate() + 21);
       }
@@ -173,7 +186,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
 
     case 'every_4_weeks': {
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(current));
         current.setDate(current.getDate() + 28);
       }
@@ -185,11 +198,10 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
       let monthIndex = 0;
       while (results.length < targetCount) {
         const next = new Date(start.getFullYear(), start.getMonth() + monthIndex, 1, 12, 0, 0);
-        // Clamp to last day of month if necessary (e.g. 31 Jan -> 28 Feb)
         const daysInMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
         next.setDate(Math.min(anchorDay, daysInMonth));
 
-        if (endLimitDate && next > endLimitDate) break;
+        if (endLimitDate && next > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(next));
         monthIndex++;
       }
@@ -204,7 +216,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
         const daysInMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
         next.setDate(Math.min(anchorDay, daysInMonth));
 
-        if (endLimitDate && next > endLimitDate) break;
+        if (endLimitDate && next > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(next));
         monthIndex++;
       }
@@ -219,7 +231,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
         const daysInMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
         next.setDate(Math.min(anchorDay, daysInMonth));
 
-        if (endLimitDate && next > endLimitDate) break;
+        if (endLimitDate && next > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(next));
         monthIndex++;
       }
@@ -234,7 +246,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
         const daysInMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
         next.setDate(Math.min(anchorDay, daysInMonth));
 
-        if (endLimitDate && next > endLimitDate) break;
+        if (endLimitDate && next > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(next));
         monthIndex++;
       }
@@ -251,7 +263,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
         const clampedDay = Math.min(anchorDay, daysInTargetMonth);
         const next = new Date(targetYear, anchorMonth, clampedDay, 12, 0, 0);
 
-        if (endLimitDate && next > endLimitDate) break;
+        if (endLimitDate && next > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(next));
         yearOffset++;
       }
@@ -261,7 +273,7 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
     case 'custom_days': {
       const interval = Math.max(rule.interval || 2, 1);
       while (results.length < targetCount) {
-        if (endLimitDate && current > endLimitDate) break;
+        if (endLimitDate && current > endLimitDate && results.length >= minForeverCount) break;
         results.push(formatDateToYMD(current));
         current.setDate(current.getDate() + interval);
       }
@@ -278,6 +290,88 @@ export function generateRecurrenceDates(startDateStr: string, rule: RecurrenceRu
   }
 
   return results;
+}
+
+/**
+ * Extends all active 'forever' recurring series to ensure there are instances
+ * planned at least `lookaheadDays` (default 90) into the future from `fromDateStr`.
+ * Returns newly generated HealthEvent instances that need to be saved to DB.
+ */
+export function extendForeverSeries(
+  existingEvents: HealthEvent[],
+  fromDateStr: string = formatDateToYMD(new Date()),
+  lookaheadDays: number = 90
+): HealthEvent[] {
+  const fromDate = parseYMDToDate(fromDateStr);
+  const targetHorizon = new Date(fromDate);
+  targetHorizon.setDate(targetHorizon.getDate() + lookaheadDays);
+  const targetHorizonStr = formatDateToYMD(targetHorizon);
+
+  // Group events by recurrenceGroupId
+  const groups = new Map<string, HealthEvent[]>();
+  for (const ev of existingEvents) {
+    if (ev.recurrenceGroupId) {
+      const list = groups.get(ev.recurrenceGroupId) || [];
+      list.push(ev);
+      groups.set(ev.recurrenceGroupId, list);
+    }
+  }
+
+  const newEventsToCreate: HealthEvent[] = [];
+
+  for (const [groupId, groupList] of groups.entries()) {
+    const template = groupList.find(e => e.recurrence && e.recurrence.endType === 'forever');
+    if (!template || !template.recurrence) continue;
+
+    // Existing dates set for deduplication
+    const existingDates = new Set(groupList.map(e => e.date));
+    const sortedDates = Array.from(existingDates).sort();
+    const minDateStr = sortedDates[0];
+    const maxDateStr = sortedDates[sortedDates.length - 1];
+
+    if (!maxDateStr || !minDateStr) continue;
+
+    // If maxDateStr is already >= targetHorizonStr, series is already sufficiently planned
+    if (maxDateStr >= targetHorizonStr) {
+      continue;
+    }
+
+    // Generate dates from the anchor start date up to targetHorizonStr
+    const ruleWithUntil: RecurrenceRule = {
+      ...template.recurrence,
+      endType: 'until_date',
+      endDate: targetHorizonStr,
+    };
+
+    const allDates = generateRecurrenceDates(minDateStr, ruleWithUntil, {
+      targetDate: targetHorizonStr,
+    });
+
+    const now = Date.now();
+    let addIndex = 0;
+    for (const d of allDates) {
+      if (!existingDates.has(d) && d <= targetHorizonStr) {
+        existingDates.add(d);
+        newEventsToCreate.push({
+          id: `ext_${now.toString(36)}_${addIndex++}_${Math.random().toString(36).substring(2, 6)}`,
+          petId: template.petId,
+          date: d,
+          time: template.time,
+          type: template.type,
+          title: template.title,
+          notes: template.notes,
+          isCompleted: false,
+          recurrence: template.recurrence,
+          recurrenceGroupId: groupId,
+          recurrenceLabel: template.recurrenceLabel,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+    }
+  }
+
+  return newEventsToCreate;
 }
 
 /**

@@ -1,6 +1,6 @@
 # Regulamin i Polityka Prywatności aplikacji „Dziennik Pupila”
 
-**Wersja 1.2.0 · obowiązuje od września 2026 r.**
+**Wersja 1.2.1 · obowiązuje od września 2026 r.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 1. Niniejszy Regulamin określa zasady korzystania z aplikacji **„Dziennik Pupila”** (dalej: „Aplikacja”), dostępnej pod adresem internetowym wdrożenia oraz jako zainstalowana aplikacja PWA w pamięci urządzenia.
 2. Właścicielem, twórcą i jedynym autorem Aplikacji jest **mgr Krzysztof Jureczek** (dalej: „Autor”).
-3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP** (pełna treść w pliku `LICENSE.md`). Regulamin i Licencja stanowią całość i obowiązują łącznie.
+3. Aplikacja dystrybuowana jest na warunkach **Wolnej Licencji Użytku Prywatnego (Zastrzeżonej) — WLUP** (pełna treść w pliku `LICENSE`). Regulamin i Licencja stanowią całość i obowiązują łącznie.
 4. Korzystanie z Aplikacji oznacza pełną akceptację niniejszego Regulaminu oraz Licencji.
 
 ---
@@ -39,7 +39,7 @@ Wszelkie prawa do Aplikacji — kod źródłowy, interfejs graficzny, projekt wi
 | ❌ **Zabronione** | Kopiowanie, modyfikowanie, dekompilowanie, rozpowszechnianie, sprzedaż lub komercjalizacja Aplikacji bądź jej części bez pisemnej zgody Autora |
 | ✅ **Dozwolone** | Korzystanie z Aplikacji zgodnie z jej przeznaczeniem wyłącznie prywatnym (§ 2), instalowanie na urządzeniach własnych oraz udostępnianie linku do Aplikacji innym osobom fizycznym do ich użytku prywatnego |
 
-Szczegółowe warunki licencyjne określa plik `LICENSE.md`. W sprawach zgody na inne wykorzystanie prosimy o kontakt z Autorem.
+Szczegółowe warunki licencyjne określa plik `LICENSE`. W sprawach zgody na inne wykorzystanie prosimy o kontakt z Autorem.
 
 ---
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pet, SpeciesType } from '../types';
 import { Plus, Trash2, Edit2, X, Sparkles, Camera, Calendar, Heart, ShieldAlert } from 'lucide-react';
-import { compressImageToBase64, getSpeciesEmoji, calculateAgeInPolish } from '../utils';
+import { compressImageToBase64, getSpeciesEmoji, calculateAgeInPolish, getSpeciesLabel } from '../utils';
 
 interface PetManagerProps {
   currentPets: Pet[];
@@ -158,57 +158,61 @@ export default function PetManager({
           return (
             <div
               key={pet.id}
-              onClick={() => onSelectPet(pet.id)}
-              className={`group relative p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+              className={`group relative rounded-2xl border transition-all duration-200 flex flex-col justify-between overflow-hidden ${
                 isSelected
                   ? 'bg-natural-highlight/85 border-natural-sage ring-2 ring-natural-sage/20'
                   : 'bg-natural-cream border-natural-border hover:border-natural-clay/50 hover:shadow-xs'
               }`}
             >
-              <div className="flex gap-3">
-                {/* Avatar */}
-                <div className="relative w-12 h-12 rounded-full overflow-hidden border border-natural-border flex items-center justify-center bg-natural-highlight shrink-0 shadow-xs">
-                  {pet.avatar ? (
-                    <img
-                      src={pet.avatar}
-                      alt={pet.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-2xl">{getSpeciesEmoji(pet.species)}</span>
-                  )}
-                </div>
-
-                {/* Pet Bio */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-serif font-bold text-natural-dark truncate flex items-center gap-1.5">
-                    {pet.name}
-                    {isSelected && (
-                      <span className="inline-flex w-2.5 h-2.5 rounded-full bg-natural-olive animate-pulse border border-white" />
+              <button
+                type="button"
+                onClick={() => onSelectPet(pet.id)}
+                aria-pressed={isSelected}
+                className="w-full text-left p-4 pb-2 cursor-pointer flex flex-col focus:outline-none"
+              >
+                <div className="flex gap-3 w-full">
+                  {/* Avatar */}
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border border-natural-border flex items-center justify-center bg-natural-highlight shrink-0 shadow-xs">
+                    {pet.avatar ? (
+                      <img
+                        src={pet.avatar}
+                        alt={pet.name}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-2xl">{getSpeciesEmoji(pet.species)}</span>
                     )}
-                  </h3>
-                  <p className="text-xs text-natural-primary/70 capitalize truncate mt-0.5">
-                    {pet.species === 'inne' && pet.customSpecies
-                      ? pet.customSpecies
-                      : `${getSpeciesEmoji(pet.species)} ${pet.species}`}
-                  </p>
-                  <p className="text-[10px] text-natural-clay mt-1 font-medium flex items-center gap-1">
-                    <Calendar size={10} />
-                    {pet.birthDate ? calculateAgeInPolish(pet.birthDate) : 'Nie podany wiek'}
-                  </p>
-                </div>
-              </div>
+                  </div>
 
-              {/* Display custom note excerpt if any */}
-              {pet.notes && (
-                <p className="text-[11px] text-natural-primary/70 italic mt-3 pt-2 border-t border-dashed border-natural-border/60 line-clamp-1">
-                  „{pet.notes}”
-                </p>
-              )}
+                  {/* Pet Bio */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-serif font-bold text-natural-dark truncate flex items-center gap-1.5">
+                      {pet.name}
+                      {isSelected && (
+                        <span className="inline-flex w-2.5 h-2.5 rounded-full bg-natural-olive animate-pulse border border-white" />
+                      )}
+                    </h3>
+                    <p className="text-xs text-natural-primary/70 capitalize truncate mt-0.5">
+                      {`${getSpeciesEmoji(pet.species)} ${getSpeciesLabel(pet.species, pet.customSpecies)}`}
+                    </p>
+                    <p className="text-[10px] text-natural-clay mt-1 font-medium flex items-center gap-1">
+                      <Calendar size={10} />
+                      {pet.birthDate ? calculateAgeInPolish(pet.birthDate) : 'Nie podany wiek'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Display custom note excerpt if any */}
+                {pet.notes && (
+                  <p className="text-[11px] text-natural-primary/70 italic mt-3 pt-2 border-t border-dashed border-natural-border/60 line-clamp-1 w-full">
+                    „{pet.notes}”
+                  </p>
+                )}
+              </button>
 
               {/* Action indicators */}
-              <div className="flex items-center justify-end gap-1.5 mt-4 pt-2 border-t border-natural-border/50">
+              <div className="flex items-center justify-end gap-1.5 px-4 pb-3 pt-1 border-t border-natural-border/50">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -217,6 +221,7 @@ export default function PetManager({
                   }}
                   className="p-1 rounded-md text-natural-primary/60 hover:bg-natural-cream hover:text-natural-dark transition cursor-pointer"
                   title="Edytuj profil"
+                  aria-label={`Edytuj profil pupila ${pet.name}`}
                 >
                   <Edit2 size={13} />
                 </button>
@@ -228,6 +233,7 @@ export default function PetManager({
                   }}
                   className="p-1 rounded-md text-natural-primary/60 hover:bg-destructive/5 hover:text-destructive transition cursor-pointer"
                   title="Usuń profil"
+                  aria-label={`Usuń profil pupila ${pet.name}`}
                 >
                   <Trash2 size={13} />
                 </button>

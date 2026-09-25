@@ -21,6 +21,17 @@ export default function ImportConfirmModal({
   const [importMode, setImportMode] = useState<'merge' | 'replace'>('merge');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,13 +94,18 @@ export default function ImportConfirmModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-natural-cream max-w-lg w-full rounded-3xl border border-natural-border shadow-2xl p-6 space-y-5">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="import-modal-title"
+        className="bg-natural-cream max-w-lg w-full rounded-3xl border border-natural-border shadow-2xl p-6 space-y-5"
+      >
         <div className="flex items-center justify-between border-b border-natural-border/70 pb-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-natural-sage/20 text-natural-secondary flex items-center justify-center">
               <Upload size={18} />
             </div>
-            <h3 className="text-base font-serif font-bold text-natural-dark">
+            <h3 id="import-modal-title" className="text-base font-serif font-bold text-natural-dark">
               Przywracanie kopii zapasowej
             </h3>
           </div>
@@ -97,6 +113,7 @@ export default function ImportConfirmModal({
             type="button"
             onClick={onClose}
             className="p-1 rounded-lg text-natural-primary/50 hover:bg-natural-highlight hover:text-natural-dark transition cursor-pointer"
+            aria-label="Zamknij okno importu"
           >
             <X size={18} />
           </button>

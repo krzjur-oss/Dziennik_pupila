@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DiaryEntry, CategoryType } from '../types';
 import { Camera, Calendar, Clock, Sparkles, X, ChevronRight, Edit3, Image as ImageIcon, Save, Check, Plus, Mic, MicOff } from 'lucide-react';
 import { compressImageToBase64, CATEGORIES, extractWeight, extractWeightWithUnit } from '../utils';
-import DrawingBoard from './DrawingBoard';
+
+const DrawingBoard = React.lazy(() => import('./DrawingBoard'));
 
 interface NoteEditorProps {
   activePetId: string;
@@ -51,6 +52,13 @@ export default function NoteEditor({
       rec.continuous = true;
       rec.interimResults = false;
       rec.lang = 'pl-PL';
+      if ('processLocally' in rec) {
+        try {
+          (rec as any).processLocally = true;
+        } catch {
+          // ignore
+        }
+      }
 
       rec.onstart = () => {
         setIsListening(true);
@@ -681,11 +689,13 @@ export default function NoteEditor({
           {/* Embedded Drawing Canvas */}
           {showDrawingBoard && (
             <div className="mt-3 animate-in fade-in duration-250">
-              <DrawingBoard
-                initialData={drawing}
-                onChange={handleDrawingChange}
-                height={260}
-              />
+              <React.Suspense fallback={<div className="h-48 flex items-center justify-center text-xs text-natural-primary/60">Ładowanie szkicownika...</div>}>
+                <DrawingBoard
+                  initialData={drawing}
+                  onChange={handleDrawingChange}
+                  height={260}
+                />
+              </React.Suspense>
             </div>
           )}
         </div>

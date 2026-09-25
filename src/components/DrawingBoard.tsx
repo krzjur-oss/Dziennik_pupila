@@ -36,18 +36,29 @@ export default function DrawingBoard({ initialData, onChange, height = 300 }: Dr
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Handle resizing to parent width
+    // Handle resizing to parent width with devicePixelRatio scaling
     const resizeCanvas = () => {
       const parent = canvas.parentElement;
       if (!parent) return;
+
+      const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 
       // Save current content
       const tempImage = new Image();
       const currentData = canvas.toDataURL();
       
       const rect = parent.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = height;
+      const cssWidth = rect.width;
+      const cssHeight = height;
+
+      canvas.width = Math.round(cssWidth * dpr);
+      canvas.height = Math.round(cssHeight * dpr);
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
+
+      // Reset transform and apply DPR scaling
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
 
       // Set initial context values
       ctx.lineCap = 'round';
@@ -55,7 +66,7 @@ export default function DrawingBoard({ initialData, onChange, height = 300 }: Dr
 
       // Restore content after resize
       tempImage.onload = () => {
-        ctx.drawImage(tempImage, 0, 0);
+        ctx.drawImage(tempImage, 0, 0, cssWidth, cssHeight);
       };
       tempImage.src = currentData;
     };
@@ -64,9 +75,12 @@ export default function DrawingBoard({ initialData, onChange, height = 300 }: Dr
 
     // If initial drawing exists, draw it
     if (initialData) {
+      const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
       const img = new Image();
       img.onload = () => {
-        ctx.drawImage(img, 0, 0);
+        const parent = canvas.parentElement;
+        const cssWidth = parent ? parent.getBoundingClientRect().width : canvas.width / dpr;
+        ctx.drawImage(img, 0, 0, cssWidth, height);
         setHasContent(true);
         // Put in initial history
         setHistory([initialData]);
@@ -87,11 +101,17 @@ export default function DrawingBoard({ initialData, onChange, height = 300 }: Dr
     };
   }, [height]);
 
-  // Handle drawings
+  // Handle drawings with Pointer Events & pointer capture
   const startDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch {
+      // ignore if pointer capture not supported
+    }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -139,17 +159,25 @@ export default function DrawingBoard({ initialData, onChange, height = 300 }: Dr
     ctx.stroke();
   };
 
-  const stopDrawing = () => {
+  const stopDrawing = (e?: React.PointerEvent<HTMLCanvasElement>) => {
+    if (e && canvasRef.current) {
+      try {
+        if (canvasRef.current.hasPointerCapture(e.pointerId)) {
+          canvasRef.current.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // ignore
+      }
+    }
+
     if (!isDrawing) return;
     setIsDrawing(false);
 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Check if canvas has actually been drawn on
-    const dataUrl = canvas.toDataURL();
-    
     // Save to history
+    const dataUrl = canvas.toDataURL();
     setHistory((prev) => {
       const nextHistory = [...prev, dataUrl];
       // Limit history to 20 states to prevent memory leaks
@@ -327,6 +355,7 @@ export default function DrawingBoard({ initialData, onChange, height = 300 }: Dr
           onPointerDown={startDrawing}
           onPointerMove={draw}
           onPointerUp={stopDrawing}
+          onPointerCancel={stopDrawing}
           onPointerLeave={stopDrawing}
           className="block w-full"
           style={{ height: `${height}px` }}
